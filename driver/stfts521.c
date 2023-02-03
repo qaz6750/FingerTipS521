@@ -4,7 +4,7 @@ Copyright (C) Microsoft Corporation, All Rights Reserved.
 
 Module Name:
 
-    vhidmini.cpp
+    stfts521.cpp
 
 Abstract:
 
@@ -16,7 +16,7 @@ Environment:
 
 --*/
 
-#include "vhidmini.h"
+#include "stfts521.h"
 
 #define EVT_ID_NOEVENT						0x00	/*No Events*/
 #define EVT_ID_CONTROLLER_READY				0x03	/*Controller ready, issued after a system reset.*/
@@ -1780,14 +1780,14 @@ Return Value:
 
     if (NT_SUCCESS(status)) {
 
-        if (stringIndex != VHIDMINI_DEVICE_STRING_INDEX)
+        if (stringIndex != STFTS521_DEVICE_STRING_INDEX)
         {
             status = STATUS_INVALID_PARAMETER;
             
             return status;
         }
 
-        status = RequestCopyFromBuffer(Request, VHIDMINI_DEVICE_STRING, sizeof(VHIDMINI_DEVICE_STRING));
+        status = RequestCopyFromBuffer(Request, STFTS521_DEVICE_STRING, sizeof(STFTS521_DEVICE_STRING));
     }
     return status;
 }
@@ -1830,16 +1830,16 @@ Return Value:
 
     switch (stringId){
     case HID_STRING_ID_IMANUFACTURER:
-        stringSizeCb = sizeof(VHIDMINI_MANUFACTURER_STRING);
-        string = VHIDMINI_MANUFACTURER_STRING;
+        stringSizeCb = sizeof(STFTS521_MANUFACTURER_STRING);
+        string = STFTS521_MANUFACTURER_STRING;
         break;
     case HID_STRING_ID_IPRODUCT:
-        stringSizeCb = sizeof(VHIDMINI_PRODUCT_STRING);
-        string = VHIDMINI_PRODUCT_STRING;
+        stringSizeCb = sizeof(STFTS521_PRODUCT_STRING);
+        string = STFTS521_PRODUCT_STRING;
         break;
     case HID_STRING_ID_ISERIALNUMBER:
-        stringSizeCb = sizeof(VHIDMINI_SERIAL_NUMBER_STRING);
-        string = VHIDMINI_SERIAL_NUMBER_STRING;
+        stringSizeCb = sizeof(STFTS521_SERIAL_NUMBER_STRING);
+        string = STFTS521_SERIAL_NUMBER_STRING;
         break;
     default:
         status = STATUS_INVALID_PARAMETER;

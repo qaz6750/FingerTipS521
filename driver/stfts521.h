@@ -4,7 +4,7 @@ Copyright (C) Microsoft Corporation, All Rights Reserved
 
 Module Name:
 
-    vhidmini.h
+    stfts521.h
 
 Abstract:
 

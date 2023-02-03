@@ -19,7 +19,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\vhidmini.c">
+    <ClCompile Include="..\stfts521.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="util.c">
@@ -27,12 +27,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="vhidmini.rc">
+    <ResourceCompile Include="stfts521.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="*.inx">
+    <Inf Include="stfts521.inx">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>

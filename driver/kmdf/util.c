@@ -16,7 +16,7 @@ Environment:
 
 --*/
 
-#include "vhidmini.h"
+#include "stfts521.h"
 //
 // First let's review Buffer Descriptions for I/O Control Codes
 //

@@ -17,8 +17,8 @@ Environment:
 
 --*/
 
-#ifndef __VHIDMINI_COMMON_H__
-#define __VHIDMINI_COMMON_H__
+#ifndef __STFTS521_COMMON_H__
+#define __STFTS521_COMMON_H__
 
 //
 // Custom control codes are defined here. They are to be used for sideband 
@@ -37,11 +37,11 @@ Environment:
 #define TEST_COLLECTION_REPORT_ID                         0x02
 
 #define MAXIMUM_STRING_LENGTH           (126 * sizeof(WCHAR))
-#define VHIDMINI_MANUFACTURER_STRING    L"UMDF Virtual hidmini device Manufacturer string"  
-#define VHIDMINI_PRODUCT_STRING         L"UMDF Virtual hidmini device Product string"  
-#define VHIDMINI_SERIAL_NUMBER_STRING   L"UMDF Virtual hidmini device Serial Number string"  
-#define VHIDMINI_DEVICE_STRING          L"UMDF Virtual hidmini device"  
-#define VHIDMINI_DEVICE_STRING_INDEX    5
+#define STFTS521_MANUFACTURER_STRING    L"UMDF Virtual hidmini device Manufacturer string"  
+#define STFTS521_PRODUCT_STRING         L"UMDF Virtual hidmini device Product string"  
+#define STFTS521_SERIAL_NUMBER_STRING   L"UMDF Virtual hidmini device Serial Number string"  
+#define STFTS521_DEVICE_STRING          L"UMDF Virtual hidmini device"  
+#define STFTS521_DEVICE_STRING_INDEX    5
 #include <pshpack1.h>
 
 
@@ -117,4 +117,4 @@ typedef struct _HIDMINI_OUTPUT_REPORT {
 #define INPUT_REPORT_SIZE_CB        ((USHORT)(sizeof(HIDMINI_INPUT_REPORT) - 1))
 #define OUTPUT_REPORT_SIZE_CB       ((USHORT)(sizeof(HIDMINI_OUTPUT_REPORT) - 1))
 
-#endif //__VHIDMINI_COMMON_H__
+#endif //__STFTS521_COMMON_H__

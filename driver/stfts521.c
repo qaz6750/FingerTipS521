@@ -37,7 +37,7 @@ ULONG XYExchange = 0;
 ULONG XMin = 0;
 ULONG XMax = 1080;
 ULONG YMin = 0;
-ULONG YMax = 2250;
+ULONG YMax = 2340;
 
 
 typedef struct
@@ -2085,6 +2085,7 @@ OnInterruptIsr(
             readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
             readReport.points[i * 6 + 4] = y & 0xFF;
             readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
+            DbgPrint("move/press tid: %d\tx: %d\ty: %d remain:%d\n", touchId, x, y, remain);
         }
 
         status = WdfIoQueueRetrieveNextRequest(
@@ -2160,6 +2161,7 @@ SpbDeviceOpen(
     SpbDeviceWriteRead(pDevice, cmd_readevent, eventbuf, 3, 256);
 
     //enable interrupt
+    DbgPrint("enabling Interrupt\n");
     WdfInterruptEnable(pDevice->Interrupt);
 }
 VOID

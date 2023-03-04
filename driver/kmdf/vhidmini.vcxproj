@@ -264,7 +264,7 @@
     <ResourceCompile Include="stfts521.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Exclude="@(Inf)" Include="stfts521.inx" />
+    <Inf Exclude="@(Inf)" Include="stfts521.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>
   <ItemGroup>

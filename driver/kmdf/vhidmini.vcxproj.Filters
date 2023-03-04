@@ -32,7 +32,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="stfts521.inx">
+    <Inf Include="stfts521.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>

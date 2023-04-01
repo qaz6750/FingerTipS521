@@ -30,7 +30,7 @@ Environment:
 
 #include <hidport.h>  // located in $(DDK_INC_PATH)/wdm
 
-#include "common.h"
+#include "inc/common.h"
 
 #define RESHUB_USE_HELPER_ROUTINES
 #include "reshub.h"

@@ -31,10 +31,13 @@ Environment:
 #define EVT_ID_USER_REPORT					0x53	/*User related events triggered (keys, gestures, proximity etc)*/
 #define EVT_ID_ERROR						0xF3	/*Error Event*/
 
+#define TOUCH_ID_MAX                        10
+
 BYTE cmd_lockdown[3] = { 0xA4, 0x06, 0x70 };
 BYTE cmd_readevent[3] = { 0x86, 0x00, 0x00 };
 BYTE cmd_scanmode[3] = { 0xA0, 0x00, 0x00 };
 BYTE cmd_gesture[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
+BYTE cmd_single_only[4] = { 0xC0, 0x02, 0x00, 0x00 };
 BYTE cmd_single_double[4] = { 0xC0, 0x02, 0x01, 0x1E };
 BYTE eventbuf[256];
 
@@ -2047,17 +2050,17 @@ OnInterruptIsr(
         //
 
         //get all event data
-        SpbDeviceWriteRead(pDevice, cmd_readevent, &eventbuf[0], 3, 8);
+        fts_writeRead_dma_safe(pDevice, cmd_readevent, &eventbuf[0], 3, 8);
         remain = eventbuf[7];
         if (remain > 0)
         {
-            SpbDeviceWriteRead(pDevice, cmd_readevent, &eventbuf[8], 3, 8 * remain);
+            fts_writeRead_dma_safe(pDevice, cmd_readevent, &eventbuf[8], 3, 8 * remain);
         }
         if (remain > 9)
             remain = 9;
         //total event count
         readReport.DIG_TouchScreenContactCount = (BYTE)remain + 1;
-        
+
         for (int i = 0;i < (remain + 1);i++)
         {
             touchType = eventbuf[i * 8 + 1] & 0x0F;
@@ -2092,8 +2095,9 @@ OnInterruptIsr(
             readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
             readReport.points[i * 6 + 4] = y & 0xFF;
             readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
-            DbgPrint("eventbuf %d\n", eventbuf[i * 8 + 0]);
-            DbgPrint("move/press tid: %d\tx: %d\ty: %d remain:%d\n", touchId, x, y, remain);
+
+            //DPrint("Event:%d\t ", eventbuf[i * 8 + 0]);
+            //DbgPrint("touchId:%d\t x:%d\t y:%d\t ", touchId, x, y);
         }
 
         status = WdfIoQueueRetrieveNextRequest(
@@ -2148,25 +2152,27 @@ SpbDeviceOpen(
     {
     }
     //lockdown
-    SpbDeviceWrite(pDevice, cmd_lockdown, 3);
+    fts_write_dma_safe(pDevice, cmd_lockdown, 3);
     //active scan off
     cmd_scanmode[1] = 0x00; //active scan
     cmd_scanmode[2] = 0x00; //off
-    SpbDeviceWrite(pDevice, cmd_scanmode, 3);
+    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
     //enable gesture
-    SpbDeviceWrite(pDevice, cmd_gesture, 6);
+    fts_write_dma_safe(pDevice, cmd_gesture, 6);
     //low power scan off
     cmd_scanmode[1] = 0x01; //low power scan
     cmd_scanmode[2] = 0x00; //off
-    SpbDeviceWrite(pDevice, cmd_scanmode, 3);
+    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
+    //enable single only 
+    fts_write_dma_safe(pDevice, cmd_single_only, 4);
     //enable single and double
-    SpbDeviceWrite(pDevice, cmd_single_double, 4);
+    fts_write_dma_safe(pDevice, cmd_single_double, 4);
     //active scan on
     cmd_scanmode[1] = 0x00; //active scan
     cmd_scanmode[2] = 0x01; //on
-    SpbDeviceWrite(pDevice, cmd_scanmode, 3);
+    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
     //drain event
-    SpbDeviceWriteRead(pDevice, cmd_readevent, eventbuf, 3, 256);
+    fts_writeRead_dma_safe(pDevice, cmd_readevent, eventbuf, 3, 256);
 
     //enable interrupt
     DbgPrint("enabling Interrupt\n");
@@ -2182,7 +2188,7 @@ SpbDeviceClose(
     WdfIoTargetClose(pDevice->SpbController);
 }
 VOID
-SpbDeviceWrite(
+fts_write_dma_safe(
     _In_ PDEVICE_CONTEXT pDevice,
     _In_ PVOID pInputBuffer,
     _In_ size_t inputBufferLength
@@ -2212,7 +2218,7 @@ SpbDeviceWrite(
 }
 
 VOID
-SpbDeviceWriteRead(
+fts_writeRead_dma_safe(
     _In_ PDEVICE_CONTEXT pDevice,
     _In_ PVOID pInputBuffer,
     _In_ PVOID pOutputBuffer,

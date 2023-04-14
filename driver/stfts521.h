@@ -30,7 +30,7 @@ Environment:
 
 #include <hidport.h>  // located in $(DDK_INC_PATH)/wdm
 
-#include "inc/common.h"
+#include "Include/common.h"
 
 #define RESHUB_USE_HELPER_ROUTINES
 #include "reshub.h"
@@ -187,14 +187,16 @@ VOID
 SpbDeviceClose(
     _In_  PDEVICE_CONTEXT  pDevice
 );
+// [SpbDeviceWrite]-fts_write_dma_safe
 VOID
-SpbDeviceWrite(
+fts_write_dma_safe(
     _In_ PDEVICE_CONTEXT pDevice,
     _In_ PVOID pInputBuffer,
     _In_ size_t inputBufferLength
 );
+// [SpbDeviceWriteRead]-fts_writeRead_dma_safe
 VOID
-SpbDeviceWriteRead(
+fts_writeRead_dma_safe(
     _In_ PDEVICE_CONTEXT pDevice,
     _In_ PVOID pInputBuffer,
     _In_ PVOID pOutputBuffer,

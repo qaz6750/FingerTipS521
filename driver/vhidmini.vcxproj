@@ -68,6 +68,7 @@
     <DriverType>KMDF</DriverType>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
+    <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetVersion>Windows10</TargetVersion>
@@ -193,6 +194,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\inc;..</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_UNICODE;UNICODE;POOL_NX_OPTIN=1</PreprocessorDefinitions>
@@ -273,7 +275,8 @@
     <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Exclude="@(ClInclude)" Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd" />
+    <ClInclude Include="stfts521.h" />
+    <ClInclude Include="..\Include\fts_lib\ftsSoftware.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

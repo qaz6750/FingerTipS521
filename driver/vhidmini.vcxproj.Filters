@@ -19,10 +19,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\stfts521.c">
+    <ClCompile Include="util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.c">
+    <ClCompile Include="stfts521.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,5 +35,13 @@
     <Inf Include="stfts521.inf">
       <Filter>Driver Files</Filter>
     </Inf>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\fts_lib\ftsSoftware.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stfts521.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

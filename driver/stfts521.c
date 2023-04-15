@@ -1976,6 +1976,14 @@ Return Value:
         WdfRequestComplete(request, status);
     }
 }
+/*++
+To be implemented:
+  
+  1.Update firmware
+  2.Verifying if CX CRC Error
+
+--*/
+
 BOOLEAN
 OnInterruptIsr(
     _In_  WDFINTERRUPT FxInterrupt,
@@ -2048,7 +2056,7 @@ OnInterruptIsr(
         //total event count
         readReport.DIG_TouchScreenContactCount = (BYTE)remain + 1;
 
-        for (int i = 0;i < (remain + 1);i++)
+        for (int i = 0; i < TOUCH_ID_MAX; i++)
         {
             touchType = eventbuf[i * 8 + 1] & 0x0F;
             touchId = (eventbuf[i * 8 + 1] & 0xF0) >> 4;
@@ -2065,16 +2073,31 @@ OnInterruptIsr(
                 x = y;
                 y = temp;
             }
-
-            switch (eventbuf[i * 8 + 0])
-            {
-            case EVT_ID_ENTER_POINT:
-            case EVT_ID_MOTION_POINT:
-                readReport.points[i * 6 + 0] = 0x07;
-                break;
-            case EVT_ID_LEAVE_POINT:
-                readReport.points[i * 6 + 0] = 0x06;
-                break;
+            // Classify touch types
+            // I hope it doesn't conflict with Stylus
+            switch(touchType)
+            {    
+                case TOUCH_TYPE_STYLUS:
+                    DbgPrint("It is a stylus");
+                    break;
+                case TOUCH_TYPE_FINGER:
+                    // It is a finger
+                case TOUCH_TYPE_GLOVE:
+                    // It is a glove
+                case TOUCH_TYPE_PALM:
+                    // Start the switch
+                    switch (eventbuf[i * 8 + 0])
+                    {
+                    case EVT_ID_ENTER_POINT:
+                    case EVT_ID_MOTION_POINT:
+                        readReport.points[i * 6 + 0] = 0x07;
+                        break;
+                    case EVT_ID_LEAVE_POINT:
+                        readReport.points[i * 6 + 0] = 0x06;
+                        break;
+                    }
+                case TOUCH_TYPE_INVALID:
+                    break;
             }
 
             readReport.points[i * 6 + 1] = touchId;
@@ -2083,7 +2106,7 @@ OnInterruptIsr(
             readReport.points[i * 6 + 4] = y & 0xFF;
             readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
 
-            //DPrint("Event:%d\t ", eventbuf[i * 8 + 0]);
+            //DbgPrint("Event:%d\t touchId:%d\t ", eventbuf[i * 8 + 0], touchId);
             //DbgPrint("touchId:%d\t x:%d\t y:%d\t ", touchId, x, y);
         }
 

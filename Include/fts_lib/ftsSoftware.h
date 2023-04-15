@@ -23,3 +23,10 @@ Abstract:
 #define EVT_ID_ERROR						0xF3	/*Error Event*/
 
 #define TOUCH_ID_MAX                        10
+
+#define TOUCH_TYPE_INVALID					0x00	/*Invalid touch type*/
+#define TOUCH_TYPE_FINGER					0x01	/*Finger touch*/
+#define TOUCH_TYPE_GLOVE					0x02	/*Glove touch*/
+#define TOUCH_TYPE_STYLUS					0x03	/*Stylus touch*/
+#define TOUCH_TYPE_PALM						0x04	/*Palm touch*/
+#define TOUCH_TYPE_HOVER					0x05	/*Hovering touch*/

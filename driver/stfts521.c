@@ -2060,25 +2060,13 @@ OnInterruptIsr(
         {
             touchType = eventbuf[i * 8 + 1] & 0x0F;
             touchId = (eventbuf[i * 8 + 1] & 0xF0) >> 4;
-            x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
-            y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
 
-            if (XRevert == 1)
-                x = XMax - x;
-            if (YRevert == 1)
-                y = YMax - y;
-            if (XYExchange == 1)
-            {
-                temp = x;
-                x = y;
-                y = temp;
-            }
             // Classify touch types
             // I hope it doesn't conflict with Stylus
             switch(touchType)
             {    
                 case TOUCH_TYPE_STYLUS:
-                    DbgPrint("It is a stylus");
+                    DbgPrint("It is a stylus\n");
                     break;
                 case TOUCH_TYPE_FINGER:
                     // It is a finger
@@ -2086,28 +2074,77 @@ OnInterruptIsr(
                     // It is a glove
                 case TOUCH_TYPE_PALM:
                     // Start the switch
-                    switch (eventbuf[i * 8 + 0])
-                    {
+                  switch (eventbuf[i * 8 + 0])
+                  {
                     case EVT_ID_ENTER_POINT:
                     case EVT_ID_MOTION_POINT:
+                        x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
+                        y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
+
+                        if (XRevert == 1)
+                            x = XMax - x;
+                        if (YRevert == 1)
+                            y = YMax - y;
+                        if (XYExchange == 1)
+                        {
+                            temp = x;
+                            x = y;
+                            y = temp;
+                        }
+
                         readReport.points[i * 6 + 0] = 0x07;
+
+                        readReport.points[i * 6 + 1] = touchId;
+                        readReport.points[i * 6 + 2] = x & 0xFF;
+                        readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
+                        readReport.points[i * 6 + 4] = y & 0xFF;
+                        readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
+
                         break;
                     case EVT_ID_LEAVE_POINT:
+                        x = (eventbuf[i * 8 + 2] << 4) | (eventbuf[i * 8 + 4] & 0xF0) >> 4;
+                        y = (eventbuf[i * 8 + 3] << 4) | (eventbuf[i * 8 + 4] & 0x0F);
+
+                        if (XRevert == 1)
+                            x = XMax - x;
+                        if (YRevert == 1)
+                            y = YMax - y;
+                        if (XYExchange == 1)
+                        {
+                            temp = x;
+                            x = y;
+                            y = temp;
+                        }
+
                         readReport.points[i * 6 + 0] = 0x06;
+
+                        readReport.points[i * 6 + 1] = touchId;
+                        readReport.points[i * 6 + 2] = x & 0xFF;
+                        readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
+                        readReport.points[i * 6 + 4] = y & 0xFF;
+                        readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
+
                         break;
-                    }
+                    case EVT_ID_STATUS_UPDATE:
+                        switch (eventbuf[i * 8 + 1]) 
+                        {
+                            case EVT_TYPE_STATUS_ECHO:
+                            case EVT_TYPE_STATUS_FORCE_CAL:
+                            case EVT_TYPE_STATUS_FRAME_DROP:
+                            case EVT_TYPE_STATUS_WATER:
+                            case EVT_TYPE_STATUS_SS_RAW_SAT:
+                            case EVT_TYPE_STATUS_POCKET:
+                                break;
+                            default:
+                                break;
+                        }
+                  }
                 case TOUCH_TYPE_INVALID:
                     break;
             }
 
-            readReport.points[i * 6 + 1] = touchId;
-            readReport.points[i * 6 + 2] = x & 0xFF;
-            readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
-            readReport.points[i * 6 + 4] = y & 0xFF;
-            readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
+            DbgPrint("Event:%02X\n", eventbuf[i * 8 + 0]);
 
-            //DbgPrint("Event:%d\t touchId:%d\t ", eventbuf[i * 8 + 0], touchId);
-            //DbgPrint("touchId:%d\t x:%d\t y:%d\t ", touchId, x, y);
         }
 
         status = WdfIoQueueRetrieveNextRequest(
@@ -2168,15 +2205,15 @@ SpbDeviceOpen(
     cmd_scanmode[2] = 0x00; //off
     fts_write_dma_safe(pDevice, cmd_scanmode, 3);
     //enable gesture
-    fts_write_dma_safe(pDevice, cmd_gesture, 6);
+    //fts_write_dma_safe(pDevice, cmd_gesture, 6);
     //low power scan off
     cmd_scanmode[1] = 0x01; //low power scan
     cmd_scanmode[2] = 0x00; //off
     fts_write_dma_safe(pDevice, cmd_scanmode, 3);
     //enable single only 
-    fts_write_dma_safe(pDevice, cmd_single_only, 4);
+    //fts_write_dma_safe(pDevice, cmd_single_only, 4);
     //enable single and double
-    fts_write_dma_safe(pDevice, cmd_single_double, 4);
+    //fts_write_dma_safe(pDevice, cmd_single_double, 4);
     //active scan on
     cmd_scanmode[1] = 0x00; //active scan
     cmd_scanmode[2] = 0x01; //on

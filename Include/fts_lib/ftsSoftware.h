@@ -30,3 +30,13 @@ Abstract:
 #define TOUCH_TYPE_STYLUS					0x03	/*Stylus touch*/
 #define TOUCH_TYPE_PALM						0x04	/*Palm touch*/
 #define TOUCH_TYPE_HOVER					0x05	/*Hovering touch*/
+
+/* 
+* Types of EVT_ID_STATUS_UPDATE events
+*/
+#define EVT_TYPE_STATUS_ECHO				0x01	/*Echo event, contain the first 5 bytes of the FW command sent*/
+#define EVT_TYPE_STATUS_FRAME_DROP			0x03	/*Some frame was skipped during the elaboration*/
+#define EVT_TYPE_STATUS_FORCE_CAL			0x05	/*Force Calibration has triggered*/
+#define EVT_TYPE_STATUS_WATER				0x06	/*Water Mode*/
+#define EVT_TYPE_STATUS_SS_RAW_SAT			0x07	/*Self Sense data saturated*/
+#define EVT_TYPE_STATUS_POCKET				0x09

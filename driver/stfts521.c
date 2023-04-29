@@ -24,7 +24,6 @@ BYTE cmd_lockdown[3] = { 0xA4, 0x06, 0x70 };
 BYTE cmd_readevent[3] = { 0x86, 0x00, 0x00 };
 BYTE cmd_scanmode[3] = { 0xA0, 0x00, 0x00 };
 BYTE cmd_gesture[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
-BYTE cmd_single_only[4] = { 0xC0, 0x02, 0x00, 0x00 };
 BYTE cmd_single_double[4] = { 0xC0, 0x02, 0x01, 0x1E };
 BYTE eventbuf[256];
 
@@ -2210,8 +2209,6 @@ SpbDeviceOpen(
     cmd_scanmode[1] = 0x01; //low power scan
     cmd_scanmode[2] = 0x00; //off
     fts_write_dma_safe(pDevice, cmd_scanmode, 3);
-    //enable single only 
-    //fts_write_dma_safe(pDevice, cmd_single_only, 4);
     //enable single and double
     //fts_write_dma_safe(pDevice, cmd_single_double, 4);
     //active scan on

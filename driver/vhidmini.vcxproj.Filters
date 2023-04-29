@@ -25,6 +25,9 @@
     <ClCompile Include="stfts521.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\fts_lib\ftsCore.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="stfts521.rc">
@@ -44,6 +47,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\fts_lib\ftsHardware.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\fts_lib\ftsCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

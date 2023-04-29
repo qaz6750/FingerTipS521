@@ -251,6 +251,7 @@
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\fts_lib\ftsCore.c" />
     <ClCompile Include="stfts521.c">
       <WppEnabled Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</WppEnabled>
       <WppScanConfigurationData Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">C:\Users\eric\Downloads\Windows-driver-samples-master\Windows-driver-samples-master\hid\vhidmini2\driver\trace.h</WppScanConfigurationData>
@@ -275,6 +276,7 @@
     <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\fts_lib\ftsCore.h" />
     <ClInclude Include="..\Include\fts_lib\ftsHardware.h" />
     <ClInclude Include="stfts521.h" />
     <ClInclude Include="..\Include\fts_lib\ftsSoftware.h" />

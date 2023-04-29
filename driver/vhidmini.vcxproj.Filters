@@ -43,5 +43,8 @@
     <ClInclude Include="stfts521.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\fts_lib\ftsHardware.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

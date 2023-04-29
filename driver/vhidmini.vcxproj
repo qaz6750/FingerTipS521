@@ -275,6 +275,7 @@
     <None Exclude="@(None)" Include="*.def;*.bat;*.hpj;*.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\fts_lib\ftsHardware.h" />
     <ClInclude Include="stfts521.h" />
     <ClInclude Include="..\Include\fts_lib\ftsSoftware.h" />
   </ItemGroup>

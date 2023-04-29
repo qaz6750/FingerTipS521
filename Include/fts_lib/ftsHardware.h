@@ -162,7 +162,7 @@ Abstract:
 #define SPI4_MASK                   0x02                                /*bit to set spi4*/
 
 /*CRC ADDR*/
-#define ADDR_CRC                    ((u64)0x0000000020000078)           /*address of the CRC control register in FTI*/
+#define ADDR_CRC                    ((BYTE)0x0000000020000078)           /*address of the CRC control register in FTI*/
 #define CRC_MASK                    0x03                                /*bitmask which reveal if there is a CRC error in the flash*/
 
 #define ADDR_CONFIG_OFFSET          ((u64)0x0000000000000000)			/*config address in memory if FTI*/

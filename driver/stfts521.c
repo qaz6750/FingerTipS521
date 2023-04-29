@@ -19,6 +19,7 @@ Environment:
 #include "stfts521.h"
 
 #include "Include/fts_lib/ftsSoftware.h"
+#include "Include/fts_lib/ftsHardware.h"
 
 BYTE cmd_lockdown[3] = { 0xA4, 0x06, 0x70 };
 BYTE cmd_readevent[3] = { 0x86, 0x00, 0x00 };

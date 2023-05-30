@@ -2060,6 +2060,20 @@ OnInterruptIsr(
         {
             touchType = eventbuf[i * 8 + 1] & 0x0F;
             touchId = (eventbuf[i * 8 + 1] & 0xF0) >> 4;
+            x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
+            y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
+
+            if (XRevert == 1)
+                x = XMax - x;
+            if (YRevert == 1)
+                y = YMax - y;
+            if (XYExchange == 1)
+            {
+                temp = x;
+                x = y;
+                y = temp;
+            }
+
 
             // Classify touch types
             // I hope it doesn't conflict with Stylus
@@ -2078,52 +2092,10 @@ OnInterruptIsr(
                   {
                     case EVT_ID_ENTER_POINT:
                     case EVT_ID_MOTION_POINT:
-                        x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
-                        y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
-
-                        if (XRevert == 1)
-                            x = XMax - x;
-                        if (YRevert == 1)
-                            y = YMax - y;
-                        if (XYExchange == 1)
-                        {
-                            temp = x;
-                            x = y;
-                            y = temp;
-                        }
-
                         readReport.points[i * 6 + 0] = 0x07;
-
-                        readReport.points[i * 6 + 1] = touchId;
-                        readReport.points[i * 6 + 2] = x & 0xFF;
-                        readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
-                        readReport.points[i * 6 + 4] = y & 0xFF;
-                        readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
-
                         break;
                     case EVT_ID_LEAVE_POINT:
-                        x = (eventbuf[i * 8 + 2] << 4) | (eventbuf[i * 8 + 4] & 0xF0) >> 4;
-                        y = (eventbuf[i * 8 + 3] << 4) | (eventbuf[i * 8 + 4] & 0x0F);
-
-                        if (XRevert == 1)
-                            x = XMax - x;
-                        if (YRevert == 1)
-                            y = YMax - y;
-                        if (XYExchange == 1)
-                        {
-                            temp = x;
-                            x = y;
-                            y = temp;
-                        }
-
                         readReport.points[i * 6 + 0] = 0x06;
-
-                        readReport.points[i * 6 + 1] = touchId;
-                        readReport.points[i * 6 + 2] = x & 0xFF;
-                        readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
-                        readReport.points[i * 6 + 4] = y & 0xFF;
-                        readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
-
                         break;
                     case EVT_ID_STATUS_UPDATE:
                         switch (eventbuf[i * 8 + 1]) 
@@ -2142,6 +2114,12 @@ OnInterruptIsr(
                 case TOUCH_TYPE_INVALID:
                     break;
             }
+
+            readReport.points[i * 6 + 1] = touchId;
+            readReport.points[i * 6 + 2] = x & 0xFF;
+            readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
+            readReport.points[i * 6 + 4] = y & 0xFF;
+            readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
 
             DbgPrint("Event:%02X\n", eventbuf[i * 8 + 0]);
 

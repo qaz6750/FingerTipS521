@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32106.194
 MinimumVisualStudioVersion = 12.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{837BF49F-1143-4D82-A340-99AAFAE83F72}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kmdf", "Kmdf", "{6E61CD28-FEB2-4D68-9E47-006C401881F6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vhidmini", "driver\vhidmini.vcxproj", "{64048006-1C5F-4262-823B-54310D7F3869}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FingerTipsTouch", "FingerTipsTouch.vcxproj", "{64048006-1C5F-4262-823B-54310D7F3869}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +32,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6E61CD28-FEB2-4D68-9E47-006C401881F6} = {837BF49F-1143-4D82-A340-99AAFAE83F72}
-		{64048006-1C5F-4262-823B-54310D7F3869} = {6E61CD28-FEB2-4D68-9E47-006C401881F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD85FB42-9349-405E-840B-389F5948E147}

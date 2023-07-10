@@ -16,7 +16,7 @@ Environment:
 
 --*/
 
-#include "stfts521.h"
+#include "Include/FingerTipsTouch.h"
 //
 // First let's review Buffer Descriptions for I/O Control Codes
 //

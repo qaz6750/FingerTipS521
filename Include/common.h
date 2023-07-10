@@ -107,14 +107,4 @@ typedef struct _HIDMINI_OUTPUT_REPORT {
 
 #include <poppack.h>
 
-//
-// SetFeature request requires that the feature report buffer size be exactly 
-// same as the size of report described in the hid report descriptor (
-// excluding the report ID). Since HIDMINI_CONTROL_INFO includes report ID,
-// we subtract one from the size.
-//
-#define FEATURE_REPORT_SIZE_CB      ((USHORT)(sizeof(HIDMINI_CONTROL_INFO) - 1))
-#define INPUT_REPORT_SIZE_CB        ((USHORT)(sizeof(HIDMINI_INPUT_REPORT) - 1))
-#define OUTPUT_REPORT_SIZE_CB       ((USHORT)(sizeof(HIDMINI_OUTPUT_REPORT) - 1))
-
 #endif //__STFTS521_COMMON_H__

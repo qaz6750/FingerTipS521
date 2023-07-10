@@ -16,11 +16,7 @@ Environment:
 
 --*/
 
-#ifdef _KERNEL_MODE
 #include <ntddk.h>
-#else
-#include <windows.h>
-#endif
 
 #include <ntddk.h>
 #include <wdm.h>
@@ -35,7 +31,7 @@ Environment:
 #define RESHUB_USE_HELPER_ROUTINES
 #include "reshub.h"
 
-typedef UCHAR HID_REPORT_DESCRIPTOR, *PHID_REPORT_DESCRIPTOR;
+typedef UCHAR HID_REPORT_DESCRIPTOR, * PHID_REPORT_DESCRIPTOR;
 
 DRIVER_INITIALIZE                   DriverEntry;
 EVT_WDF_DRIVER_DEVICE_ADD           EvtDeviceAdd;
@@ -62,7 +58,7 @@ typedef struct _DEVICE_CONTEXT
     WDFINTERRUPT            Interrupt;
     WDFIOTARGET             SpbController;
 
-} DEVICE_CONTEXT, *PDEVICE_CONTEXT;
+} DEVICE_CONTEXT, * PDEVICE_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_CONTEXT, GetDeviceContext);
 
@@ -72,15 +68,15 @@ typedef struct _QUEUE_CONTEXT
     PDEVICE_CONTEXT         DeviceContext;
     UCHAR                   OutputReport;
 
-} QUEUE_CONTEXT, *PQUEUE_CONTEXT;
+} QUEUE_CONTEXT, * PQUEUE_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(QUEUE_CONTEXT, GetQueueContext);
 
 NTSTATUS
 QueueCreate(
     _In_  WDFDEVICE         Device,
-    _Out_ WDFQUEUE          *Queue
-    );
+    _Out_ WDFQUEUE* Queue
+);
 
 typedef struct _MANUAL_QUEUE_CONTEXT
 {
@@ -88,70 +84,70 @@ typedef struct _MANUAL_QUEUE_CONTEXT
     PDEVICE_CONTEXT         DeviceContext;
     WDFTIMER                Timer;
 
-} MANUAL_QUEUE_CONTEXT, *PMANUAL_QUEUE_CONTEXT;
+} MANUAL_QUEUE_CONTEXT, * PMANUAL_QUEUE_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(MANUAL_QUEUE_CONTEXT, GetManualQueueContext);
 
 NTSTATUS
 ManualQueueCreate(
     _In_  WDFDEVICE         Device,
-    _Out_ WDFQUEUE          *Queue
-    );
+    _Out_ WDFQUEUE* Queue
+);
 
 NTSTATUS
 ReadReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request,
     _Always_(_Out_)
-          BOOLEAN*          CompleteRequest
-    );
+    BOOLEAN* CompleteRequest
+);
 
 NTSTATUS
 WriteReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 GetFeature(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 SetFeature(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 GetInputReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 SetOutputReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 GetString(
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 GetIndexedString(
     _In_  WDFREQUEST        Request
-    );
+);
 
 NTSTATUS
 GetStringId(
     _In_  WDFREQUEST        Request,
-    _Out_ ULONG            *StringId,
-    _Out_ ULONG            *LanguageId
-    );
+    _Out_ ULONG* StringId,
+    _Out_ ULONG* LanguageId
+);
 
 NTSTATUS
 RequestCopyFromBuffer(
@@ -159,19 +155,19 @@ RequestCopyFromBuffer(
     _In_  PVOID             SourceBuffer,
     _When_(NumBytesToCopyFrom == 0, __drv_reportError(NumBytesToCopyFrom cannot be zero))
     _In_  size_t            NumBytesToCopyFrom
-    );
+);
 
 NTSTATUS
 RequestGetHidXferPacket_ToReadFromDevice(
     _In_  WDFREQUEST        Request,
-    _Out_ HID_XFER_PACKET  *Packet
-    );
+    _Out_ HID_XFER_PACKET* Packet
+);
 
 NTSTATUS
 RequestGetHidXferPacket_ToWriteToDevice(
     _In_  WDFREQUEST        Request,
-    _Out_ HID_XFER_PACKET  *Packet
-    );
+    _Out_ HID_XFER_PACKET* Packet
+);
 
 BOOLEAN
 OnInterruptIsr(

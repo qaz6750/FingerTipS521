@@ -16,10 +16,10 @@ Environment:
 
 --*/
 
-#include "stfts521.h"
+#include "Include/FingerTipsTouch.h"
 
-#include "Include/fts_lib/ftsSoftware.h"
-#include "Include/fts_lib/ftsHardware.h"
+#include "Include/registers.h"
+
 
 BYTE cmd_lockdown[3] = { 0xA4, 0x06, 0x70 };
 BYTE cmd_readevent[3] = { 0x86, 0x00, 0x00 };
@@ -40,7 +40,7 @@ ULONG YMax = 2340;
 typedef struct
 {
     BYTE  reportId;                                 // Report ID = 0x54 (84) 'T'
-                                                       // Collection: TouchScreen
+    // Collection: TouchScreen
     BYTE  DIG_TouchScreenContactCountMaximum;       // Usage 0x000D0055: Contact Count Maximum, Value = 0 to 8
 } featureReport54_t;
 
@@ -57,7 +57,7 @@ typedef struct __declspec(align(2))
 typedef struct __declspec(align(2))
 {
     BYTE  reportId;                                 // Report ID = 0x54 (84) 'T'
-                                                       // Collection: TouchScreen Finger
+    // Collection: TouchScreen Finger
     BYTE points[60];
 
     BYTE  DIG_TouchScreenContactCount;              // Usage 0x000D0054: Contact Count, Value = 0 to 8
@@ -122,33 +122,6 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x09, 0x31,     //       (LOCAL)USAGE              0x00010031 Y(Dynamic Value)
     0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
     0xC0,           // (MAIN)   END_COLLECTION     Logical
-    
-    0x05, 0x0D,     // (GLOBAL) USAGE_PAGE         0x000D Digitizer Device Page
-    0x09, 0x22,     //     (LOCAL)USAGE              0x000D0022 Finger(Logical Collection)
-    0xA1, 0x02,     //     (MAIN)COLLECTION         0x02 Logical(Usage = 0x000D0022: Page = Digitizer Device Page, Usage = Finger, Type = Logical Collection)
-    0x09, 0x42,     //       (LOCAL)USAGE              0x000D0042 Tip Switch(Momentary Control)
-    0x25, 0x01,     //       (GLOBAL)LOGICAL_MAXIMUM    0x01 (1)
-    0x75, 0x01,     //       (GLOBAL)REPORT_SIZE        0x01 (1) Number of bits per field
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x09, 0x32,     //       (LOCAL)USAGE              0x000D0032 In Range(Momentary Control)
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x09, 0x47,     //       (LOCAL)USAGE              0x000D0047 Confidence(Dynamic Value)
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x95, 0x05,     //       (GLOBAL)REPORT_COUNT       0x05 (5) Number of fields
-    0x81, 0x03,     //       (MAIN)INPUT              0x00000003 (5 fields x 1 bit) 1 = Constant 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x75, 0x08,     //       (GLOBAL)REPORT_SIZE        0x08 (8) Number of bits per field
-    0x95, 0x01,     //       (GLOBAL)REPORT_COUNT       0x01 (1) Number of fields
-    0x09, 0x51,     //       (LOCAL)USAGE              0x000D0051 Contact Identifier(Dynamic Value)
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 8 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x05, 0x01,     //       (GLOBAL)USAGE_PAGE         0x0001 Generic Desktop Page
-    0x26, 0x38, 0x04,   // (GLOBAL) LOGICAL_MAXIMUM    0x7FFF (1080)    //99 100
-    0x75, 0x10,     //       (GLOBAL)REPORT_SIZE        0x10 (16) Number of bits per field
-    0x09, 0x30,     //       (LOCAL)USAGE              0x00010030 X(Dynamic Value)
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0x26, 0xCA, 0x08,   // (GLOBAL) LOGICAL_MAXIMUM    0x7FFF (2250)    //108 109
-    0x09, 0x31,     //       (LOCAL)USAGE              0x00010031 Y(Dynamic Value)
-    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
-    0xC0,           // (MAIN)   END_COLLECTION     Logical
 
     0x05, 0x0D,     // (GLOBAL) USAGE_PAGE         0x000D Digitizer Device Page
     0x09, 0x22,     //     (LOCAL)USAGE              0x000D0022 Finger(Logical Collection)
@@ -230,7 +203,34 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x09, 0x31,     //       (LOCAL)USAGE              0x00010031 Y(Dynamic Value)
     0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
     0xC0,           // (MAIN)   END_COLLECTION     Logical
-    
+
+    0x05, 0x0D,     // (GLOBAL) USAGE_PAGE         0x000D Digitizer Device Page
+    0x09, 0x22,     //     (LOCAL)USAGE              0x000D0022 Finger(Logical Collection)
+    0xA1, 0x02,     //     (MAIN)COLLECTION         0x02 Logical(Usage = 0x000D0022: Page = Digitizer Device Page, Usage = Finger, Type = Logical Collection)
+    0x09, 0x42,     //       (LOCAL)USAGE              0x000D0042 Tip Switch(Momentary Control)
+    0x25, 0x01,     //       (GLOBAL)LOGICAL_MAXIMUM    0x01 (1)
+    0x75, 0x01,     //       (GLOBAL)REPORT_SIZE        0x01 (1) Number of bits per field
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x09, 0x32,     //       (LOCAL)USAGE              0x000D0032 In Range(Momentary Control)
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x09, 0x47,     //       (LOCAL)USAGE              0x000D0047 Confidence(Dynamic Value)
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 1 bit) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x95, 0x05,     //       (GLOBAL)REPORT_COUNT       0x05 (5) Number of fields
+    0x81, 0x03,     //       (MAIN)INPUT              0x00000003 (5 fields x 1 bit) 1 = Constant 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x75, 0x08,     //       (GLOBAL)REPORT_SIZE        0x08 (8) Number of bits per field
+    0x95, 0x01,     //       (GLOBAL)REPORT_COUNT       0x01 (1) Number of fields
+    0x09, 0x51,     //       (LOCAL)USAGE              0x000D0051 Contact Identifier(Dynamic Value)
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 8 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x05, 0x01,     //       (GLOBAL)USAGE_PAGE         0x0001 Generic Desktop Page
+    0x26, 0x38, 0x04,   // (GLOBAL) LOGICAL_MAXIMUM    0x7FFF (1080)    //99 100
+    0x75, 0x10,     //       (GLOBAL)REPORT_SIZE        0x10 (16) Number of bits per field
+    0x09, 0x30,     //       (LOCAL)USAGE              0x00010030 X(Dynamic Value)
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0x26, 0xCA, 0x08,   // (GLOBAL) LOGICAL_MAXIMUM    0x7FFF (2250)    //108 109
+    0x09, 0x31,     //       (LOCAL)USAGE              0x00010031 Y(Dynamic Value)
+    0x81, 0x02,     //       (MAIN)INPUT              0x00000002 (1 field x 16 bits) 0 = Data 1 = Variable 0 = Absolute 0 = NoWrap 0 = Linear 0 = PrefState 0 = NoNull 0 = NonVolatile 0 = Bitmap
+    0xC0,           // (MAIN)   END_COLLECTION     Logical
+
     0x05, 0x0D,     // (GLOBAL) USAGE_PAGE         0x000D Digitizer Device Page
     0x09, 0x22,     //     (LOCAL)USAGE              0x000D0022 Finger(Logical Collection)
     0xA1, 0x02,     //     (MAIN)COLLECTION         0x02 Logical(Usage = 0x000D0022: Page = Digitizer Device Page, Usage = Finger, Type = Logical Collection)
@@ -377,7 +377,7 @@ HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
 
 };
 
-featureReport54_t features = {0x54,10};
+featureReport54_t features = { 0x54,10 };
 //
 // This is the default HID descriptor returned by the mini driver
 // in response to IOCTL_HID_GET_DEVICE_DESCRIPTOR. The size
@@ -400,7 +400,7 @@ NTSTATUS
 DriverEntry(
     _In_  PDRIVER_OBJECT    DriverObject,
     _In_  PUNICODE_STRING   RegistryPath
-    )
+)
 /*++
 
 Routine Description:
@@ -434,13 +434,11 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES driverAttributes;
     NTSTATUS                status;
 
-#ifdef _KERNEL_MODE
     //
     // Opt-in to using non-executable pool memory on Windows 8 and later.
     // https://msdn.microsoft.com/en-us/library/windows/hardware/hh920402(v=vs.85).aspx
     //
     ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
-#endif
 
     WDF_DRIVER_CONFIG_INIT(&config, EvtDeviceAdd);
 
@@ -448,10 +446,10 @@ Return Value:
     driverAttributes.EvtCleanupCallback = EvtDriverCleanup;
 
     status = WdfDriverCreate(DriverObject,
-                            RegistryPath,
-                            &driverAttributes,
-                            &config,
-                            WDF_NO_HANDLE);
+        RegistryPath,
+        &driverAttributes,
+        &config,
+        WDF_NO_HANDLE);
     if (!NT_SUCCESS(status)) {
 
         goto Exit;
@@ -470,7 +468,7 @@ NTSTATUS
 EvtDeviceAdd(
     _In_  WDFDRIVER         Driver,
     _Inout_ PWDFDEVICE_INIT DeviceInit
-    )
+)
 /*++
 Routine Description:
 
@@ -495,7 +493,7 @@ Return Value:
     WDFDEVICE               device;
     PDEVICE_CONTEXT         deviceContext;
     PHID_DEVICE_ATTRIBUTES  hidAttributes;
-    UNREFERENCED_PARAMETER  (Driver);
+    UNREFERENCED_PARAMETER(Driver);
 
     WDF_PNPPOWER_EVENT_CALLBACKS pnpCallbacks;
     WDF_PNPPOWER_EVENT_CALLBACKS_INIT(&pnpCallbacks);
@@ -514,36 +512,36 @@ Return Value:
     WdfDeviceInitSetPnpPowerEventCallbacks(DeviceInit, &pnpCallbacks);
 
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(
-                            &deviceAttributes,
-                            DEVICE_CONTEXT);
+        &deviceAttributes,
+        DEVICE_CONTEXT);
 
     status = WdfDeviceCreate(&DeviceInit,
-                            &deviceAttributes,
-                            &device);
+        &deviceAttributes,
+        &device);
     if (!NT_SUCCESS(status)) {
         return status;
     }
 
     deviceContext = GetDeviceContext(device);
-    deviceContext->Device       = device;
-    deviceContext->DeviceData   = 0;
+    deviceContext->Device = device;
+    deviceContext->DeviceData = 0;
 
     hidAttributes = &deviceContext->HidDeviceAttributes;
     RtlZeroMemory(hidAttributes, sizeof(HID_DEVICE_ATTRIBUTES));
-    hidAttributes->Size         = sizeof(HID_DEVICE_ATTRIBUTES);
-    hidAttributes->VendorID     = HIDMINI_VID;
-    hidAttributes->ProductID    = HIDMINI_PID;
+    hidAttributes->Size = sizeof(HID_DEVICE_ATTRIBUTES);
+    hidAttributes->VendorID = HIDMINI_VID;
+    hidAttributes->ProductID = HIDMINI_PID;
     hidAttributes->VersionNumber = HIDMINI_VERSION;
 
     status = QueueCreate(device,
-                         &deviceContext->DefaultQueue);
-    if( !NT_SUCCESS(status) ) {
+        &deviceContext->DefaultQueue);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
     status = ManualQueueCreate(device,
-                               &deviceContext->ManualQueue);
-    if( !NT_SUCCESS(status) ) {
+        &deviceContext->ManualQueue);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -562,8 +560,8 @@ Return Value:
     if (!NT_SUCCESS(status)) {
     }
 
-    G_DefaultReportDescriptor[46] = XMax&0xFF;
-    G_DefaultReportDescriptor[47] = (XMax>>8)&0x0F;
+    G_DefaultReportDescriptor[46] = XMax & 0xFF;
+    G_DefaultReportDescriptor[47] = (XMax >> 8) & 0x0F;
     G_DefaultReportDescriptor[55] = YMax & 0xFF;
     G_DefaultReportDescriptor[56] = (YMax >> 8) & 0x0F;
 
@@ -619,30 +617,30 @@ Return Value:
 }
 
 NTSTATUS
-    OnPrepareHardware(
-        _In_  WDFDEVICE     FxDevice,
-        _In_  WDFCMRESLIST  FxResourcesRaw,
-        _In_  WDFCMRESLIST  FxResourcesTranslated
-    )
-    /*++
+OnPrepareHardware(
+    _In_  WDFDEVICE     FxDevice,
+    _In_  WDFCMRESLIST  FxResourcesRaw,
+    _In_  WDFCMRESLIST  FxResourcesTranslated
+)
+/*++
 
-        Routine Description:
+    Routine Description:
 
-        This routine caches the SPB resource connection ID.
+    This routine caches the SPB resource connection ID.
 
-        Arguments:
+    Arguments:
 
-        FxDevice - a handle to the framework device object
-        FxResourcesRaw - list of translated hardware resources that
-            the PnP manager has assigned to the device
-        FxResourcesTranslated - list of raw hardware resources that
-            the PnP manager has assigned to the device
+    FxDevice - a handle to the framework device object
+    FxResourcesRaw - list of translated hardware resources that
+        the PnP manager has assigned to the device
+    FxResourcesTranslated - list of raw hardware resources that
+        the PnP manager has assigned to the device
 
-        Return Value:
+    Return Value:
 
-        Status
+    Status
 
-    --*/
+--*/
 {
     PDEVICE_CONTEXT pDevice = GetDeviceContext(FxDevice);
     BOOLEAN fSpbResourceFound = FALSE;
@@ -766,25 +764,25 @@ NTSTATUS
 }
 
 NTSTATUS
-    OnReleaseHardware(
-        _In_  WDFDEVICE     FxDevice,
-        _In_  WDFCMRESLIST  FxResourcesTranslated
-    )
-    /*++
+OnReleaseHardware(
+    _In_  WDFDEVICE     FxDevice,
+    _In_  WDFCMRESLIST  FxResourcesTranslated
+)
+/*++
 
-        Routine Description:
+    Routine Description:
 
-        Arguments:
+    Arguments:
 
-        FxDevice - a handle to the framework device object
-        FxResourcesTranslated - list of raw hardware resources that
-            the PnP manager has assigned to the device
+    FxDevice - a handle to the framework device object
+    FxResourcesTranslated - list of raw hardware resources that
+        the PnP manager has assigned to the device
 
-        Return Value:
+    Return Value:
 
-        Status
+    Status
 
-    --*/
+--*/
 {
     PDEVICE_CONTEXT pDevice = GetDeviceContext(FxDevice);
     NTSTATUS status = STATUS_SUCCESS;
@@ -894,8 +892,8 @@ EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL          EvtIoDeviceControl;
 NTSTATUS
 QueueCreate(
     _In_  WDFDEVICE         Device,
-    _Out_ WDFQUEUE          *Queue
-    )
+    _Out_ WDFQUEUE* Queue
+)
 /*++
 Routine Description:
 
@@ -921,41 +919,32 @@ Return Value:
     PQUEUE_CONTEXT          queueContext;
 
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(
-                            &queueConfig,
-                            WdfIoQueueDispatchParallel);
+        &queueConfig,
+        WdfIoQueueDispatchParallel);
 
-#ifdef _KERNEL_MODE
-    queueConfig.EvtIoInternalDeviceControl  = EvtIoDeviceControl;
-#else
-    //
-    // HIDclass uses INTERNAL_IOCTL which is not supported by UMDF. Therefore
-    // the hidumdf.sys changes the IOCTL type to DEVICE_CONTROL for next stack
-    // and sends it down
-    //
-    queueConfig.EvtIoDeviceControl          = EvtIoDeviceControl;
-#endif
+    queueConfig.EvtIoInternalDeviceControl = EvtIoDeviceControl;
 
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(
-                            &queueAttributes,
-                            QUEUE_CONTEXT);
+        &queueAttributes,
+        QUEUE_CONTEXT);
 
     status = WdfIoQueueCreate(
-                            Device,
-                            &queueConfig,
-                            &queueAttributes,
-                            &queue);
+        Device,
+        &queueConfig,
+        &queueAttributes,
+        &queue);
 
-    if( !NT_SUCCESS(status) ) {
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
     queueContext = GetQueueContext(queue);
-    queueContext->Queue         = queue;
+    queueContext->Queue = queue;
     queueContext->DeviceContext = GetDeviceContext(Device);
-    queueContext->OutputReport  = 0;
+    queueContext->OutputReport = 0;
 
     *Queue = queue;
-    
+
     return status;
 }
 
@@ -966,7 +955,7 @@ EvtIoDeviceControl(
     _In_  size_t            OutputBufferLength,
     _In_  size_t            InputBufferLength,
     _In_  ULONG             IoControlCode
-    )
+)
 /*++
 Routine Description:
 
@@ -1000,8 +989,8 @@ Return Value:
     WDFDEVICE               device = WdfIoQueueGetDevice(Queue);
     PDEVICE_CONTEXT         deviceContext = NULL;
     PQUEUE_CONTEXT          queueContext = GetQueueContext(Queue);
-    UNREFERENCED_PARAMETER  (OutputBufferLength);
-    UNREFERENCED_PARAMETER  (InputBufferLength);
+    UNREFERENCED_PARAMETER(OutputBufferLength);
+    UNREFERENCED_PARAMETER(InputBufferLength);
 
     deviceContext = GetDeviceContext(device);
 
@@ -1013,8 +1002,8 @@ Return Value:
         //
         _Analysis_assume_(deviceContext->HidDescriptor.bLength != 0);
         status = RequestCopyFromBuffer(Request,
-                            &deviceContext->HidDescriptor,
-                            deviceContext->HidDescriptor.bLength);
+            &deviceContext->HidDescriptor,
+            deviceContext->HidDescriptor.bLength);
         break;
 
     case IOCTL_HID_GET_DEVICE_ATTRIBUTES:   // METHOD_NEITHER
@@ -1022,8 +1011,8 @@ Return Value:
         //Retrieves a device's attributes in a HID_DEVICE_ATTRIBUTES structure.
         //
         status = RequestCopyFromBuffer(Request,
-                            &queueContext->DeviceContext->HidDeviceAttributes,
-                            sizeof(HID_DEVICE_ATTRIBUTES));
+            &queueContext->DeviceContext->HidDeviceAttributes,
+            sizeof(HID_DEVICE_ATTRIBUTES));
         break;
 
     case IOCTL_HID_GET_REPORT_DESCRIPTOR:   // METHOD_NEITHER
@@ -1031,8 +1020,8 @@ Return Value:
         //Obtains the report descriptor for the HID device.
         //
         status = RequestCopyFromBuffer(Request,
-                            deviceContext->ReportDescriptor,
-                            deviceContext->HidDescriptor.DescriptorList[0].wReportLength);
+            deviceContext->ReportDescriptor,
+            deviceContext->HidDescriptor.DescriptorList[0].wReportLength);
         break;
 
     case IOCTL_HID_READ_REPORT:             // METHOD_NEITHER
@@ -1049,8 +1038,6 @@ Return Value:
         //
         status = WriteReport(queueContext, Request);
         break;
-
-#ifdef _KERNEL_MODE
 
     case IOCTL_HID_GET_FEATURE:             // METHOD_OUT_DIRECT
 
@@ -1071,49 +1058,6 @@ Return Value:
 
         status = SetOutputReport(queueContext, Request);
         break;
-
-#else // UMDF specific
-
-    //
-    // HID minidriver IOCTL uses HID_XFER_PACKET which contains an embedded pointer.
-    //
-    //   typedef struct _HID_XFER_PACKET {
-    //     PUCHAR reportBuffer;
-    //     ULONG  reportBufferLen;
-    //     UCHAR  reportId;
-    //   } HID_XFER_PACKET, *PHID_XFER_PACKET;
-    //
-    // UMDF cannot handle embedded pointers when marshalling buffers between processes.
-    // Therefore a special driver mshidumdf.sys is introduced to convert such IRPs to
-    // new IRPs (with new IOCTL name like IOCTL_UMDF_HID_Xxxx) where:
-    //
-    //   reportBuffer - passed as one buffer inside the IRP
-    //   reportId     - passed as a second buffer inside the IRP
-    //
-    // The new IRP is then passed to UMDF host and driver for further processing.
-    //
-
-    case IOCTL_UMDF_HID_GET_FEATURE:        // METHOD_NEITHER
-
-        status = GetFeature(queueContext, Request);
-        break;
-
-    case IOCTL_UMDF_HID_SET_FEATURE:        // METHOD_NEITHER
-
-        status = SetFeature(queueContext, Request);
-        break;
-
-    case IOCTL_UMDF_HID_GET_INPUT_REPORT:  // METHOD_NEITHER
-
-        status = GetInputReport(queueContext, Request);
-        break;
-
-    case IOCTL_UMDF_HID_SET_OUTPUT_REPORT: // METHOD_NEITHER
-
-        status = SetOutputReport(queueContext, Request);
-        break;
-
-#endif // _KERNEL_MODE
 
     case IOCTL_HID_GET_STRING:                      // METHOD_NEITHER
 
@@ -1162,7 +1106,7 @@ RequestCopyFromBuffer(
     _In_  PVOID             SourceBuffer,
     _When_(NumBytesToCopyFrom == 0, __drv_reportError(NumBytesToCopyFrom cannot be zero))
     _In_  size_t            NumBytesToCopyFrom
-    )
+)
 /*++
 
 Routine Description:
@@ -1188,7 +1132,7 @@ Return Value:
     size_t                  outputBufferLength;
 
     status = WdfRequestRetrieveOutputMemory(Request, &memory);
-    if( !NT_SUCCESS(status) ) {
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1199,11 +1143,11 @@ Return Value:
     }
 
     status = WdfMemoryCopyFromBuffer(memory,
-                                    0,
-                                    SourceBuffer,
-                                    NumBytesToCopyFrom);
-    if( !NT_SUCCESS(status) ) {
-        
+        0,
+        SourceBuffer,
+        NumBytesToCopyFrom);
+    if (!NT_SUCCESS(status)) {
+
         return status;
     }
     WdfRequestSetInformation(Request, NumBytesToCopyFrom);
@@ -1215,8 +1159,8 @@ ReadReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request,
     _Always_(_Out_)
-          BOOLEAN*          CompleteRequest
-    )
+    BOOLEAN* CompleteRequest
+)
 /*++
 
 Routine Description:
@@ -1249,9 +1193,9 @@ Return Value:
     // forward the request to manual queue
     //
     status = WdfRequestForwardToIoQueue(
-                            Request,
-                            QueueContext->DeviceContext->ManualQueue);
-    if( !NT_SUCCESS(status) ) {    
+        Request,
+        QueueContext->DeviceContext->ManualQueue);
+    if (!NT_SUCCESS(status)) {
         *CompleteRequest = TRUE;
     }
     else {
@@ -1265,7 +1209,7 @@ NTSTATUS
 WriteReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1291,9 +1235,9 @@ Return Value:
     PHIDMINI_OUTPUT_REPORT  outputReport;
 
     status = RequestGetHidXferPacket_ToWriteToDevice(
-                            Request,
-                            &packet);
-    if( !NT_SUCCESS(status) ) {
+        Request,
+        &packet);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1312,7 +1256,7 @@ Return Value:
 
     if (packet.reportBufferLen < reportSize) {
         status = STATUS_INVALID_BUFFER_SIZE;
-        
+
         return status;
     }
 
@@ -1335,7 +1279,7 @@ HRESULT
 GetFeature(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1357,12 +1301,12 @@ Return Value:
     NTSTATUS                status;
     HID_XFER_PACKET         packet;
     ULONG                   reportSize;
-    
+
     UNREFERENCED_PARAMETER(QueueContext);
     status = RequestGetHidXferPacket_ToReadFromDevice(
-                            Request,
-                            &packet);
-    if( !NT_SUCCESS(status) ) {
+        Request,
+        &packet);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1372,8 +1316,8 @@ Return Value:
         // this request just as you would for a regular collection.
         //
         status = STATUS_INVALID_PARAMETER;
-        
-        
+
+
         return status;
     }
 
@@ -1392,8 +1336,8 @@ Return Value:
     reportSize = sizeof(features);
     if (packet.reportBufferLen < reportSize) {
         status = STATUS_INVALID_BUFFER_SIZE;
-        
-        
+
+
         return status;
     }
 
@@ -1407,7 +1351,7 @@ Return Value:
     //
     packet.reportBuffer[0] = features.reportId;
     packet.reportBuffer[1] = features.DIG_TouchScreenContactCountMaximum;
-    
+
     //
     // Report how many bytes were copied
     //
@@ -1419,7 +1363,7 @@ NTSTATUS
 SetFeature(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1447,9 +1391,9 @@ Return Value:
     PHID_DEVICE_ATTRIBUTES  hidAttributes = &QueueContext->DeviceContext->HidDeviceAttributes;
 
     status = RequestGetHidXferPacket_ToWriteToDevice(
-                            Request,
-                            &packet);
-    if( !NT_SUCCESS(status) ) {
+        Request,
+        &packet);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1459,8 +1403,8 @@ Return Value:
         // this request just as you would for a regular collection.
         //
         status = STATUS_INVALID_PARAMETER;
-        
-        
+
+
         return status;
     }
 
@@ -1471,21 +1415,21 @@ Return Value:
 
     if (packet.reportBufferLen < reportSize) {
         status = STATUS_INVALID_BUFFER_SIZE;
-        
-        
+
+
         return status;
     }
 
     controlInfo = (PHIDMINI_CONTROL_INFO)packet.reportBuffer;
 
-    switch(controlInfo->ControlCode)
+    switch (controlInfo->ControlCode)
     {
     case HIDMINI_CONTROL_CODE_SET_ATTRIBUTES:
         //
         // Store the device attributes in device extension
         //
-        hidAttributes->ProductID     = controlInfo->u.Attributes.ProductID;
-        hidAttributes->VendorID      = controlInfo->u.Attributes.VendorID;
+        hidAttributes->ProductID = controlInfo->u.Attributes.ProductID;
+        hidAttributes->VendorID = controlInfo->u.Attributes.VendorID;
         hidAttributes->VersionNumber = controlInfo->u.Attributes.VersionNumber;
 
         //
@@ -1496,12 +1440,12 @@ Return Value:
 
     case HIDMINI_CONTROL_CODE_DUMMY1:
         status = STATUS_NOT_IMPLEMENTED;
-        
+
         break;
 
     case HIDMINI_CONTROL_CODE_DUMMY2:
         status = STATUS_NOT_IMPLEMENTED;
-        
+
         break;
 
     default:
@@ -1515,7 +1459,7 @@ NTSTATUS
 GetInputReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1540,9 +1484,9 @@ Return Value:
     PHIDMINI_INPUT_REPORT   reportBuffer;
 
     status = RequestGetHidXferPacket_ToReadFromDevice(
-                            Request,
-                            &packet);
-    if( !NT_SUCCESS(status) ) {
+        Request,
+        &packet);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1552,21 +1496,21 @@ Return Value:
         // this request just as you would for a regular collection.
         //
         status = STATUS_INVALID_PARAMETER;
-        
+
         return status;
     }
 
     reportSize = sizeof(HIDMINI_INPUT_REPORT);
     if (packet.reportBufferLen < reportSize) {
         status = STATUS_INVALID_BUFFER_SIZE;
-        
+
         return status;
     }
 
     reportBuffer = (PHIDMINI_INPUT_REPORT)(packet.reportBuffer);
 
     reportBuffer->ReportId = CONTROL_COLLECTION_REPORT_ID;
-    reportBuffer->Data     = QueueContext->OutputReport;
+    reportBuffer->Data = QueueContext->OutputReport;
 
     //
     // Report how many bytes were copied
@@ -1580,7 +1524,7 @@ NTSTATUS
 SetOutputReport(
     _In_  PQUEUE_CONTEXT    QueueContext,
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1605,9 +1549,9 @@ Return Value:
     PHIDMINI_OUTPUT_REPORT  reportBuffer;
 
     status = RequestGetHidXferPacket_ToWriteToDevice(
-                            Request,
-                            &packet);
-    if( !NT_SUCCESS(status) ) {
+        Request,
+        &packet);
+    if (!NT_SUCCESS(status)) {
         return status;
     }
 
@@ -1617,7 +1561,7 @@ Return Value:
         // this request just as you would for a regular collection.
         //
         status = STATUS_INVALID_PARAMETER;
-        
+
         return status;
     }
 
@@ -1646,9 +1590,9 @@ Return Value:
 NTSTATUS
 GetStringId(
     _In_  WDFREQUEST        Request,
-    _Out_ ULONG            *StringId,
-    _Out_ ULONG            *LanguageId
-    )
+    _Out_ ULONG* StringId,
+    _Out_ ULONG* LanguageId
+)
 /*++
 
 Routine Description:
@@ -1711,8 +1655,8 @@ Return Value:
     //
 
     status = WdfRequestRetrieveInputMemory(Request, &inputMemory);
-    if( !NT_SUCCESS(status) ) {
-        KdPrint(("WdfRequestRetrieveInputMemory failed 0x%x\n",status));
+    if (!NT_SUCCESS(status)) {
+        KdPrint(("WdfRequestRetrieveInputMemory failed 0x%x\n", status));
         return status;
     }
     inputBuffer = WdfMemoryGetBuffer(inputMemory, &inputBufferLength);
@@ -1724,7 +1668,7 @@ Return Value:
     {
         status = STATUS_INVALID_BUFFER_SIZE;
         KdPrint(("GetStringId: invalid input buffer. size %d, expect %d\n",
-                            (int)inputBufferLength, (int)sizeof(ULONG)));
+            (int)inputBufferLength, (int)sizeof(ULONG)));
         return status;
     }
 
@@ -1735,7 +1679,7 @@ Return Value:
     //
     // The least significant two bytes of the INT value contain the string id.
     //
-    *StringId = (inputValue & 0x0ffff);
+    * StringId = (inputValue & 0x0ffff);
 
     //
     // The most significant two bytes of the INT value contain the language
@@ -1749,7 +1693,7 @@ Return Value:
 NTSTATUS
 GetIndexedString(
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1780,7 +1724,7 @@ Return Value:
         if (stringIndex != STFTS521_DEVICE_STRING_INDEX)
         {
             status = STATUS_INVALID_PARAMETER;
-            
+
             return status;
         }
 
@@ -1793,7 +1737,7 @@ Return Value:
 NTSTATUS
 GetString(
     _In_  WDFREQUEST        Request
-    )
+)
 /*++
 
 Routine Description:
@@ -1825,7 +1769,7 @@ Return Value:
         return status;
     }
 
-    switch (stringId){
+    switch (stringId) {
     case HID_STRING_ID_IMANUFACTURER:
         stringSizeCb = sizeof(STFTS521_MANUFACTURER_STRING);
         string = STFTS521_MANUFACTURER_STRING;
@@ -1840,7 +1784,7 @@ Return Value:
         break;
     default:
         status = STATUS_INVALID_PARAMETER;
-        
+
         return status;
     }
 
@@ -1852,8 +1796,8 @@ Return Value:
 NTSTATUS
 ManualQueueCreate(
     _In_  WDFDEVICE         Device,
-    _Out_ WDFQUEUE          *Queue
-    )
+    _Out_ WDFQUEUE* Queue
+)
 /*++
 Routine Description:
 
@@ -1899,29 +1843,29 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES   queueAttributes;
     WDFQUEUE                queue;
     PMANUAL_QUEUE_CONTEXT   queueContext;
-    
+
     WDF_IO_QUEUE_CONFIG_INIT(
-                            &queueConfig,
-                            WdfIoQueueDispatchManual);
+        &queueConfig,
+        WdfIoQueueDispatchManual);
 
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(
-                            &queueAttributes,
-                            MANUAL_QUEUE_CONTEXT);
+        &queueAttributes,
+        MANUAL_QUEUE_CONTEXT);
 
     status = WdfIoQueueCreate(
-                            Device,
-                            &queueConfig,
-                            &queueAttributes,
-                            &queue);
+        Device,
+        &queueConfig,
+        &queueAttributes,
+        &queue);
 
-    if( !NT_SUCCESS(status) ) {
-        
-        
+    if (!NT_SUCCESS(status)) {
+
+
         return status;
     }
 
     queueContext = GetManualQueueContext(queue);
-    queueContext->Queue         = queue;
+    queueContext->Queue = queue;
     queueContext->DeviceContext = GetDeviceContext(Device);
 
     *Queue = queue;
@@ -1931,7 +1875,7 @@ Return Value:
 void
 EvtTimerFunc(
     _In_  WDFTIMER          Timer
-    )
+)
 /*++
 Routine Description:
 
@@ -1961,28 +1905,21 @@ Return Value:
     // see if we have a request in manual queue
     //
     status = WdfIoQueueRetrieveNextRequest(
-                            queueContext->Queue,
-                            &request);
+        queueContext->Queue,
+        &request);
 
     if (NT_SUCCESS(status)) {
 
         readReport.ReportId = CONTROL_FEATURE_REPORT_ID;
-        readReport.Data     = queueContext->DeviceContext->DeviceData;
+        readReport.Data = queueContext->DeviceContext->DeviceData;
 
         status = RequestCopyFromBuffer(request,
-                            &readReport,
-                            sizeof(readReport));
+            &readReport,
+            sizeof(readReport));
 
         WdfRequestComplete(request, status);
     }
 }
-/*++
-To be implemented:
-  
-  1.Update firmware
-  2.Verifying if CX CRC Error
-
---*/
 
 BOOLEAN
 OnInterruptIsr(
@@ -2077,42 +2014,42 @@ OnInterruptIsr(
 
             // Classify touch types
             // I hope it doesn't conflict with Stylus
-            switch(touchType)
-            {    
-                case TOUCH_TYPE_STYLUS:
-                    DbgPrint("It is a stylus\n");
+            switch (touchType)
+            {
+            case TOUCH_TYPE_STYLUS:
+                DbgPrint("It is a stylus\n");
+                break;
+            case TOUCH_TYPE_FINGER:
+                // It is a finger
+            case TOUCH_TYPE_GLOVE:
+                // It is a glove
+            case TOUCH_TYPE_PALM:
+                // Start the switch
+                switch (eventbuf[i * 8 + 0])
+                {
+                case EVT_ID_ENTER_POINT:
+                case EVT_ID_MOTION_POINT:
+                    readReport.points[i * 6 + 0] = 0x07;
                     break;
-                case TOUCH_TYPE_FINGER:
-                    // It is a finger
-                case TOUCH_TYPE_GLOVE:
-                    // It is a glove
-                case TOUCH_TYPE_PALM:
-                    // Start the switch
-                  switch (eventbuf[i * 8 + 0])
-                  {
-                    case EVT_ID_ENTER_POINT:
-                    case EVT_ID_MOTION_POINT:
-                        readReport.points[i * 6 + 0] = 0x07;
-                        break;
-                    case EVT_ID_LEAVE_POINT:
-                        readReport.points[i * 6 + 0] = 0x06;
-                        break;
-                    case EVT_ID_STATUS_UPDATE:
-                        switch (eventbuf[i * 8 + 1]) 
-                        {
-                            case EVT_TYPE_STATUS_ECHO:
-                            case EVT_TYPE_STATUS_FORCE_CAL:
-                            case EVT_TYPE_STATUS_FRAME_DROP:
-                            case EVT_TYPE_STATUS_WATER:
-                            case EVT_TYPE_STATUS_SS_RAW_SAT:
-                            case EVT_TYPE_STATUS_POCKET:
-                                break;
-                            default:
-                                break;
-                        }
-                  }
-                case TOUCH_TYPE_INVALID:
+                case EVT_ID_LEAVE_POINT:
+                    readReport.points[i * 6 + 0] = 0x06;
                     break;
+                case EVT_ID_STATUS_UPDATE:
+                    switch (eventbuf[i * 8 + 1])
+                    {
+                    case EVT_TYPE_STATUS_ECHO:
+                    case EVT_TYPE_STATUS_FORCE_CAL:
+                    case EVT_TYPE_STATUS_FRAME_DROP:
+                    case EVT_TYPE_STATUS_WATER:
+                    case EVT_TYPE_STATUS_SS_RAW_SAT:
+                    case EVT_TYPE_STATUS_POCKET:
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            case TOUCH_TYPE_INVALID:
+                break;
             }
 
             readReport.points[i * 6 + 1] = touchId;
@@ -2143,7 +2080,7 @@ OnInterruptIsr(
 
     return fInterruptRecognized;
 }
-VOID 
+VOID
 SpbDeviceOpen(
     _In_  PDEVICE_CONTEXT  pDevice
 )
@@ -2289,7 +2226,7 @@ fts_writeRead_dma_safe(
 
     if (!NT_SUCCESS(status))
     {
-    }    
+    }
 }
 
 NTSTATUS

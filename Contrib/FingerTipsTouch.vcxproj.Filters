@@ -25,6 +25,9 @@
     <ClCompile Include="..\FingerTipsTouch\util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\FingerTipsTouch\spb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="..\FingerTipsTouch\FingerTipsTouch.inf">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\spb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

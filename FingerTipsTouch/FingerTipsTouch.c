@@ -17,15 +17,9 @@ Environment:
 --*/
 
 #include "Include/FingerTipsTouch.h"
-
+#include "Include/spb.h"
 #include "Include/registers.h"
 
-
-BYTE cmd_lockdown[3] = { 0xA4, 0x06, 0x70 };
-BYTE cmd_readevent[3] = { 0x86, 0x00, 0x00 };
-BYTE cmd_scanmode[3] = { 0xA0, 0x00, 0x00 };
-BYTE cmd_gesture[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
-BYTE cmd_single_double[4] = { 0xC0, 0x02, 0x01, 0x1E };
 BYTE eventbuf[256];
 
 ULONG XRevert = 0;
@@ -62,32 +56,6 @@ typedef struct __declspec(align(2))
 
     BYTE  DIG_TouchScreenContactCount;              // Usage 0x000D0054: Contact Count, Value = 0 to 8
 } inputReport54_t;
-
-//
-// This is the default report descriptor for the virtual Hid device returned
-// by the mini driver in response to IOCTL_HID_GET_REPORT_DESCRIPTOR.
-//
-/*HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
-    0x06,0x00, 0xFF,                // USAGE_PAGE (Vender Defined Usage Page)
-    0x09,0x01,                      // USAGE (Vendor Usage 0x01)
-    0xA1,0x01,                      // COLLECTION (Application)
-    0x85,CONTROL_FEATURE_REPORT_ID,    // REPORT_ID (1)
-    0x09,0x01,                         // USAGE (Vendor Usage 0x01)
-    0x15,0x00,                         // LOGICAL_MINIMUM(0)
-    0x26,0xff, 0x00,                   // LOGICAL_MAXIMUM(255)
-    0x75,0x08,                         // REPORT_SIZE (0x08)
-    0x96,(FEATURE_REPORT_SIZE_CB & 0xff), (FEATURE_REPORT_SIZE_CB >> 8), // REPORT_COUNT
-    0xB1,0x00,                         // FEATURE (Data,Ary,Abs)
-    0x09,0x01,                         // USAGE (Vendor Usage 0x01)
-    0x75,0x08,                         // REPORT_SIZE (0x08)
-    0x96,(INPUT_REPORT_SIZE_CB & 0xff), (INPUT_REPORT_SIZE_CB >> 8), // REPORT_COUNT
-    0x81,0x00,                         // INPUT (Data,Ary,Abs)
-    0x09,0x01,                         // USAGE (Vendor Usage 0x01)
-    0x75,0x08,                         // REPORT_SIZE (0x08)
-    0x96,(OUTPUT_REPORT_SIZE_CB & 0xff), (OUTPUT_REPORT_SIZE_CB >> 8), // REPORT_COUNT
-    0x91,0x00,                         // OUTPUT (Data,Ary,Abs)
-    0xC0,                           // END_COLLECTION
-};*/
 
 HID_REPORT_DESCRIPTOR       G_DefaultReportDescriptor[] = {
     0x05, 0x0D,     // (GLOBAL) USAGE_PAGE         0x000D Digitizer Device Page
@@ -398,8 +366,8 @@ HID_DESCRIPTOR              G_DefaultHidDescriptor = {
 
 NTSTATUS
 DriverEntry(
-    _In_  PDRIVER_OBJECT    DriverObject,
-    _In_  PUNICODE_STRING   RegistryPath
+    IN  PDRIVER_OBJECT    DriverObject,
+    IN  PUNICODE_STRING   RegistryPath
 )
 /*++
 
@@ -459,14 +427,14 @@ Exit:
 }
 VOID
 EvtDriverCleanup(
-    _In_ WDFOBJECT Object
+     IN  WDFOBJECT Object
 )
 {
     UNREFERENCED_PARAMETER(Object);
 }
 NTSTATUS
 EvtDeviceAdd(
-    _In_  WDFDRIVER         Driver,
+    IN      WDFDRIVER         Driver,
     _Inout_ PWDFDEVICE_INIT DeviceInit
 )
 /*++
@@ -503,7 +471,6 @@ Return Value:
     pnpCallbacks.EvtDeviceD0Entry = OnD0Entry;
     pnpCallbacks.EvtDeviceD0Exit = OnD0Exit;
 
-
     //
     // Mark ourselves as a filter, which also relinquishes power policy ownership
     //
@@ -515,11 +482,11 @@ Return Value:
         &deviceAttributes,
         DEVICE_CONTEXT);
 
-    status = WdfDeviceCreate(&DeviceInit,
-        &deviceAttributes,
-        &device);
+    status = WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device);
+
     if (!NT_SUCCESS(status)) {
-        return status;
+        DbgPrint("FTS521: WdfDeviceCreate failed - 0x%08lX \n", status);
+        goto exit;
     }
 
     deviceContext = GetDeviceContext(device);
@@ -609,18 +576,19 @@ Return Value:
     G_DefaultReportDescriptor[47 + 53 * 9] = (XMax >> 8) & 0x0F;
     G_DefaultReportDescriptor[55 + 53 * 9] = YMax & 0xFF;
     G_DefaultReportDescriptor[56 + 53 * 9] = (YMax >> 8) & 0x0F;
+    
 
     deviceContext->ReportDescriptor = G_DefaultReportDescriptor;
     status = STATUS_SUCCESS;
-
+exit: 
     return status;
 }
 
 NTSTATUS
 OnPrepareHardware(
-    _In_  WDFDEVICE     FxDevice,
-    _In_  WDFCMRESLIST  FxResourcesRaw,
-    _In_  WDFCMRESLIST  FxResourcesTranslated
+    IN  WDFDEVICE     FxDevice,
+    IN  WDFCMRESLIST  FxResourcesRaw,
+    IN  WDFCMRESLIST  FxResourcesTranslated
 )
 /*++
 
@@ -751,15 +719,12 @@ OnPrepareHardware(
 
             if (!NT_SUCCESS(status))
             {
-            }
-
-            if (NT_SUCCESS(status))
-            {
+                DbgPrint("FTS521: Error creating WDF interrupt object - 0x % 08lX \n",status);
                 WdfInterruptDisable(pDevice->Interrupt);
+                DbgPrint("FTS521: Disable Interrupt \n");
             }
         }
     }
-
     return status;
 }
 
@@ -799,8 +764,8 @@ OnReleaseHardware(
 
 NTSTATUS
 OnD0Entry(
-    _In_  WDFDEVICE               FxDevice,
-    _In_  WDF_POWER_DEVICE_STATE  FxPreviousState
+    IN  WDFDEVICE               FxDevice,
+    IN  WDF_POWER_DEVICE_STATE  FxPreviousState
 )
 /*++
 
@@ -819,10 +784,11 @@ OnD0Entry(
 
 --*/
 {
-    UNREFERENCED_PARAMETER(FxPreviousState);
+    NTSTATUS status;
 
     PDEVICE_CONTEXT pDevice = GetDeviceContext(FxDevice);
-    NTSTATUS status;
+
+    UNREFERENCED_PARAMETER(FxPreviousState);
 
     //
     // Create the SPB target.
@@ -883,11 +849,7 @@ OnD0Exit(
 }
 
 
-#ifdef _KERNEL_MODE
 EVT_WDF_IO_QUEUE_IO_INTERNAL_DEVICE_CONTROL EvtIoDeviceControl;
-#else
-EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL          EvtIoDeviceControl;
-#endif
 
 NTSTATUS
 QueueCreate(
@@ -1522,8 +1484,8 @@ Return Value:
 
 NTSTATUS
 SetOutputReport(
-    _In_  PQUEUE_CONTEXT    QueueContext,
-    _In_  WDFREQUEST        Request
+    IN  PQUEUE_CONTEXT    QueueContext,
+    IN  WDFREQUEST        Request
 )
 /*++
 
@@ -1589,7 +1551,7 @@ Return Value:
 
 NTSTATUS
 GetStringId(
-    _In_  WDFREQUEST        Request,
+    IN    WDFREQUEST        Request,
     _Out_ ULONG* StringId,
     _Out_ ULONG* LanguageId
 )
@@ -1611,8 +1573,6 @@ Return Value:
 {
     NTSTATUS                status;
     ULONG                   inputValue;
-
-#ifdef _KERNEL_MODE
 
     WDF_REQUEST_PARAMETERS  requestParameters;
 
@@ -1642,39 +1602,6 @@ Return Value:
         requestParameters.Parameters.DeviceIoControl.Type3InputBuffer);
 
     status = STATUS_SUCCESS;
-
-#else
-
-    WDFMEMORY               inputMemory;
-    size_t                  inputBufferLength;
-    PVOID                   inputBuffer;
-
-    //
-    // mshidumdf.sys updates the IRP and passes the string id (or index) through
-    // the input buffer correctly based on the IOCTL buffer type
-    //
-
-    status = WdfRequestRetrieveInputMemory(Request, &inputMemory);
-    if (!NT_SUCCESS(status)) {
-        KdPrint(("WdfRequestRetrieveInputMemory failed 0x%x\n", status));
-        return status;
-    }
-    inputBuffer = WdfMemoryGetBuffer(inputMemory, &inputBufferLength);
-
-    //
-    // make sure buffer is big enough.
-    //
-    if (inputBufferLength < sizeof(ULONG))
-    {
-        status = STATUS_INVALID_BUFFER_SIZE;
-        KdPrint(("GetStringId: invalid input buffer. size %d, expect %d\n",
-            (int)inputBufferLength, (int)sizeof(ULONG)));
-        return status;
-    }
-
-    inputValue = (*(PULONG)inputBuffer);
-
-#endif
 
     //
     // The least significant two bytes of the INT value contain the string id.
@@ -1923,8 +1850,8 @@ Return Value:
 
 BOOLEAN
 OnInterruptIsr(
-    _In_  WDFINTERRUPT FxInterrupt,
-    _In_  ULONG        MessageID
+    IN    WDFINTERRUPT FxInterrupt,
+    IN    ULONG        MessageID
 )
 /*++
 
@@ -1958,7 +1885,9 @@ OnInterruptIsr(
     BYTE touchType;
     BYTE touchId;
     int x, y, temp;
+
     UNREFERENCED_PARAMETER(MessageID);
+    DbgPrint("FTS521: OnInterruptIsr - Entry \n");
 
     device = WdfInterruptGetDevice(FxInterrupt);
     pDevice = GetDeviceContext(device);
@@ -1982,11 +1911,11 @@ OnInterruptIsr(
         //
 
         //get all event data
-        fts_writeRead_dma_safe(pDevice, cmd_readevent, &eventbuf[0], 3, 8);
+        FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
         remain = eventbuf[7];
         if (remain > 0)
         {
-            fts_writeRead_dma_safe(pDevice, cmd_readevent, &eventbuf[8], 3, 8 * remain);
+            FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[8], 3, 8 * remain);
         }
         if (remain > 9)
             remain = 9;
@@ -2011,13 +1940,12 @@ OnInterruptIsr(
                 y = temp;
             }
 
-
             // Classify touch types
             // I hope it doesn't conflict with Stylus
             switch (touchType)
             {
             case TOUCH_TYPE_STYLUS:
-                DbgPrint("It is a stylus\n");
+                DbgPrint("FTS521: TouchType->stylus \n");
                 break;
             case TOUCH_TYPE_FINGER:
                 // It is a finger
@@ -2034,19 +1962,6 @@ OnInterruptIsr(
                 case EVT_ID_LEAVE_POINT:
                     readReport.points[i * 6 + 0] = 0x06;
                     break;
-                case EVT_ID_STATUS_UPDATE:
-                    switch (eventbuf[i * 8 + 1])
-                    {
-                    case EVT_TYPE_STATUS_ECHO:
-                    case EVT_TYPE_STATUS_FORCE_CAL:
-                    case EVT_TYPE_STATUS_FRAME_DROP:
-                    case EVT_TYPE_STATUS_WATER:
-                    case EVT_TYPE_STATUS_SS_RAW_SAT:
-                    case EVT_TYPE_STATUS_POCKET:
-                        break;
-                    default:
-                        break;
-                    }
                 }
             case TOUCH_TYPE_INVALID:
                 break;
@@ -2058,7 +1973,7 @@ OnInterruptIsr(
             readReport.points[i * 6 + 4] = y & 0xFF;
             readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
 
-            DbgPrint("Event:%02X\n", eventbuf[i * 8 + 0]);
+            DbgPrint("FTS521: Event:%02X \n", eventbuf[i * 8 + 0]);
 
         }
 
@@ -2081,8 +1996,8 @@ OnInterruptIsr(
     return fInterruptRecognized;
 }
 VOID
-SpbDeviceOpen(
-    _In_  PDEVICE_CONTEXT  pDevice
+SpbDeviceOpen (
+    IN  PDEVICE_CONTEXT  pDevice
 )
 {
     WDF_IO_TARGET_OPEN_PARAMS  openParams;
@@ -2112,135 +2027,54 @@ SpbDeviceOpen(
 
     if (!NT_SUCCESS(status))
     {
+        DbgPrint("FTS521: Error opening Spb target for communication - 0x%08lX \n",status);
     }
+
     //lockdown
-    fts_write_dma_safe(pDevice, cmd_lockdown, 3);
-    //active scan off
-    cmd_scanmode[1] = 0x00; //active scan
-    cmd_scanmode[2] = 0x00; //off
-    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
+    FtsWriteData(pDevice, FTS521_LOCKDOWN, 3);
+
     //enable gesture
-    //fts_write_dma_safe(pDevice, cmd_gesture, 6);
+    //FtsWriteData(pDevice, FTS521_GESTURE, 6);
+
+    //Set delay time 
+    FtsWriteData(pDevice, FTS521_ONLY_SINGLE, 4);
+    FtsWriteData(pDevice, FTS521_SINGLE_DOUBLE, 4);
+
+    //active scan off
+    FTS521_SCAN_MODE[1] = 0x00; //active scan
+    FTS521_SCAN_MODE[2] = 0x00; //off
+    FtsWriteData(pDevice, FTS521_SCAN_MODE, 3);
+
     //low power scan off
-    cmd_scanmode[1] = 0x01; //low power scan
-    cmd_scanmode[2] = 0x00; //off
-    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
-    //enable single and double
-    //fts_write_dma_safe(pDevice, cmd_single_double, 4);
+    FTS521_SCAN_MODE[1] = 0x01; //low power scan
+    FTS521_SCAN_MODE[2] = 0x00; //off
+    FtsWriteData(pDevice, FTS521_SCAN_MODE, 3);
+
     //active scan on
-    cmd_scanmode[1] = 0x00; //active scan
-    cmd_scanmode[2] = 0x01; //on
-    fts_write_dma_safe(pDevice, cmd_scanmode, 3);
+    FTS521_SCAN_MODE[1] = 0x00; //active scan
+    FTS521_SCAN_MODE[2] = 0x01; //on
+    FtsWriteData(pDevice, FTS521_SCAN_MODE, 3);
+
     //drain event
-    fts_writeRead_dma_safe(pDevice, cmd_readevent, eventbuf, 3, 256);
+    FtsWriteReadData(pDevice, FTS521_READ_EVENTS, eventbuf, 3, 256);
 
     //enable interrupt
-    DbgPrint("enabling Interrupt\n");
+    DbgPrint("FTS521: Enabling Interrupt\n");
     WdfInterruptEnable(pDevice->Interrupt);
-}
-VOID
-SpbDeviceClose(
-    _In_  PDEVICE_CONTEXT  pDevice
-)
-{
-    WdfInterruptDisable(pDevice->Interrupt);
-
-    WdfIoTargetClose(pDevice->SpbController);
-}
-VOID
-fts_write_dma_safe(
-    _In_ PDEVICE_CONTEXT pDevice,
-    _In_ PVOID pInputBuffer,
-    _In_ size_t inputBufferLength
-)
-{
-    WDF_MEMORY_DESCRIPTOR  inMemoryDescriptor;
-    ULONG_PTR  bytesWritten = (ULONG_PTR)NULL;
-    NTSTATUS status;
-
-
-    WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&inMemoryDescriptor,
-        pInputBuffer,
-        (ULONG)inputBufferLength);
-
-    status = WdfIoTargetSendWriteSynchronously(
-        pDevice->SpbController,
-        NULL,
-        &inMemoryDescriptor,
-        NULL,
-        NULL,
-        &bytesWritten
-    );
-
-    if (!NT_SUCCESS(status))
-    {
-    }
-}
-
-VOID
-fts_writeRead_dma_safe(
-    _In_ PDEVICE_CONTEXT pDevice,
-    _In_ PVOID pInputBuffer,
-    _In_ PVOID pOutputBuffer,
-    _In_ size_t inputBufferLength,
-    _In_ size_t outputBufferLength
-)
-{
-    WDF_MEMORY_DESCRIPTOR  inMemoryDescriptor;
-    WDF_MEMORY_DESCRIPTOR  outMemoryDescriptor;
-    ULONG_PTR  bytesWritten = (ULONG_PTR)NULL;
-    ULONG_PTR  bytesRead = (ULONG_PTR)NULL;
-    NTSTATUS status;
-
-
-    WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&inMemoryDescriptor,
-        pInputBuffer,
-        (ULONG)inputBufferLength);
-
-    status = WdfIoTargetSendWriteSynchronously(
-        pDevice->SpbController,
-        NULL,
-        &inMemoryDescriptor,
-        NULL,
-        NULL,
-        &bytesWritten
-    );
-
-    if (!NT_SUCCESS(status))
-    {
-        return;
-    }
-
-    WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&outMemoryDescriptor,
-        pOutputBuffer,
-        (ULONG)outputBufferLength);
-
-    status = WdfIoTargetSendReadSynchronously(
-        pDevice->SpbController,
-        NULL,
-        &outMemoryDescriptor,
-        NULL,
-        NULL,
-        &bytesRead
-    );
-
-    if (!NT_SUCCESS(status))
-    {
-    }
 }
 
 NTSTATUS
 ReadDescriptorFromRegistry(
     WDFDEVICE Device
 )
-/*++
+/*
 Routine Description:
     Read HID report descriptor from registry
 Arguments:
     device - pointer to a device object.
 Return Value:
     NT status code.
---*/
+*/
 {
     WDFKEY          hKey = NULL;
     NTSTATUS        status;

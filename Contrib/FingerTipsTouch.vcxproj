@@ -254,6 +254,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\FingerTipsTouch\FingerTipsTouch.c" />
+    <ClCompile Include="..\FingerTipsTouch\spb.c" />
     <ClCompile Include="..\FingerTipsTouch\util.c" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +270,7 @@
     <ClInclude Include="..\Include\common.h" />
     <ClInclude Include="..\Include\FingerTipsTouch.h" />
     <ClInclude Include="..\Include\registers.h" />
+    <ClInclude Include="..\Include\spb.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

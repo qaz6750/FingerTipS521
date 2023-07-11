@@ -44,6 +44,7 @@ RequestGetHidXferPacket_ToReadFromDevice(
     _Out_ HID_XFER_PACKET  *Packet
     )
 {
+
     NTSTATUS                status;
     WDF_REQUEST_PARAMETERS  params;
 
@@ -52,7 +53,7 @@ RequestGetHidXferPacket_ToReadFromDevice(
 
     if (params.Parameters.DeviceIoControl.OutputBufferLength < sizeof(HID_XFER_PACKET)) {
         status = STATUS_BUFFER_TOO_SMALL;
-        KdPrint(("RequestGetHidXferPacket: invalid HID_XFER_PACKET\n"));
+        DbgPrint(("FTS521: RequestGetHidXferPacket: invalid HID_XFER_PACKET\n"));
         return status;
     }
 
@@ -74,7 +75,7 @@ RequestGetHidXferPacket_ToWriteToDevice(
 
     if (params.Parameters.DeviceIoControl.InputBufferLength < sizeof(HID_XFER_PACKET)) {
         status = STATUS_BUFFER_TOO_SMALL;
-        KdPrint(("RequestGetHidXferPacket: invalid HID_XFER_PACKET\n"));
+        DbgPrint(("FTS521: RequestGetHidXferPacket: invalid HID_XFER_PACKET\n"));
         return status;
     }
 

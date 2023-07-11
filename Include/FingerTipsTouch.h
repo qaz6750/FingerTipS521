@@ -128,8 +128,8 @@ GetInputReport(
 
 NTSTATUS
 SetOutputReport(
-    _In_  PQUEUE_CONTEXT    QueueContext,
-    _In_  WDFREQUEST        Request
+    IN  PQUEUE_CONTEXT    QueueContext,
+    IN  WDFREQUEST        Request
 );
 
 NTSTATUS
@@ -144,7 +144,7 @@ GetIndexedString(
 
 NTSTATUS
 GetStringId(
-    _In_  WDFREQUEST        Request,
+    IN    WDFREQUEST        Request,
     _Out_ ULONG* StringId,
     _Out_ ULONG* LanguageId
 );
@@ -171,33 +171,13 @@ RequestGetHidXferPacket_ToWriteToDevice(
 
 BOOLEAN
 OnInterruptIsr(
-    _In_  WDFINTERRUPT FxInterrupt,
-    _In_  ULONG        MessageID
+    IN    WDFINTERRUPT FxInterrupt,
+    IN    ULONG        MessageID
 );
 
 VOID
 SpbDeviceOpen(
-    _In_  PDEVICE_CONTEXT  pDevice
-);
-VOID
-SpbDeviceClose(
-    _In_  PDEVICE_CONTEXT  pDevice
-);
-// [SpbDeviceWrite]-fts_write_dma_safe
-VOID
-fts_write_dma_safe(
-    _In_ PDEVICE_CONTEXT pDevice,
-    _In_ PVOID pInputBuffer,
-    _In_ size_t inputBufferLength
-);
-// [SpbDeviceWriteRead]-fts_writeRead_dma_safe
-VOID
-fts_writeRead_dma_safe(
-    _In_ PDEVICE_CONTEXT pDevice,
-    _In_ PVOID pInputBuffer,
-    _In_ PVOID pOutputBuffer,
-    _In_ size_t inputBufferLength,
-    _In_ size_t outputBufferLength
+    IN  PDEVICE_CONTEXT  pDevice
 );
 
 NTSTATUS

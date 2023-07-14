@@ -1874,17 +1874,17 @@ OnInterruptIsr(
 
 --*/
 {
-    BOOLEAN fInterruptRecognized = TRUE;
-    //BOOLEAN fNotificationSent;
-    WDFDEVICE device;
-    PDEVICE_CONTEXT pDevice;
-    int remain;
-    NTSTATUS status;
-    WDFREQUEST              request;
-    inputReport54_t    readReport;
-    BYTE touchType;
-    BYTE touchId;
-    int x, y, temp;
+    WDFDEVICE             device;
+    PDEVICE_CONTEXT       pDevice;
+    NTSTATUS              status;
+    WDFREQUEST            request;
+    inputReport54_t       readReport;
+    BYTE                  touchType;
+    BYTE                  touchId;
+    int                   remain;
+    int                   x, y, z, distance;
+    int                   area_size;
+    int                   temp;
 
     UNREFERENCED_PARAMETER(MessageID);
     DbgPrint("FTS521: OnInterruptIsr - Entry \n");
@@ -1895,106 +1895,98 @@ OnInterruptIsr(
     //
     // Notify the app that an interrupt has occurred.
     //
-
-    //fNotificationSent = SpbPeripheralInterruptNotify(pDevice);
-
-    //if (fNotificationSent)
+    //get all event data
+    FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
+    remain = eventbuf[7];
+    if (remain > 0)
     {
-        //
-        // Stall in ISR until acknowledged by user.
-        //
-        // Note: In a 'real' driver, the ISR should directly
-        //       acknowledge the interrupt and then queue
-        //       a workitem to carry out any additional
-        //       processing. The ISR should never call
-        //       KeWaitForSingleObject as done below.
-        //
+        FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[8], 3, 8 * remain);
+    }
+    if (remain > 9)
+        remain = 9;
 
-        //get all event data
-        FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
-        remain = eventbuf[7];
-        if (remain > 0)
+    //total event count
+    readReport.DIG_TouchScreenContactCount = (BYTE)remain + 1;
+
+    for (int i = 0; i < TOUCH_ID_MAX; i++)
+    {
+        touchType = eventbuf[i * 8 + 1] & 0x0F;
+        touchId = (eventbuf[i * 8 + 1] & 0xF0) >> 4;
+
+        x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
+        y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
+
+        z = 1;
+        distance = 0;
+
+        if (eventbuf[i * 8 + 0] == EVT_ID_MOTION_POINT) {
+            area_size = (eventbuf[i * 8 + 5] << 8) | eventbuf[i * 8 + 6];
+        }
+        else {
+            area_size = 1;
+        }
+
+        
+        if (XRevert == 1)
+            x = XMax - x;
+        if (YRevert == 1)
+            y = YMax - y;
+        if (XYExchange == 1)
         {
-            FtsWriteReadData(pDevice, FTS521_READ_EVENTS, &eventbuf[8], 3, 8 * remain);
+            temp = x;
+            x = y;
+            y = temp;
         }
-        if (remain > 9)
-            remain = 9;
-        //total event count
-        readReport.DIG_TouchScreenContactCount = (BYTE)remain + 1;
-
-        for (int i = 0; i < TOUCH_ID_MAX; i++)
+        
+        
+        switch (touchType)
         {
-            touchType = eventbuf[i * 8 + 1] & 0x0F;
-            touchId = (eventbuf[i * 8 + 1] & 0xF0) >> 4;
-            x = (((int)eventbuf[i * 8 + 3] & 0x0F) << 8) | (eventbuf[i * 8 + 2]);
-            y = ((int)eventbuf[i * 8 + 4] << 4) | ((eventbuf[i * 8 + 3] & 0xF0) >> 4);
-
-            if (XRevert == 1)
-                x = XMax - x;
-            if (YRevert == 1)
-                y = YMax - y;
-            if (XYExchange == 1)
+        case TOUCH_TYPE_STYLUS:
+        case TOUCH_TYPE_FINGER:
+            switch (eventbuf[i * 8 + 0])
             {
-                temp = x;
-                x = y;
-                y = temp;
+            case EVT_ID_ENTER_POINT:
+                FtsWriteData(pDevice, FTS521_ONLY_SINGLE, 4);
+                DbgPrint("FTS521: my god \n");
+            case EVT_ID_MOTION_POINT:
+            readReport.points[i * 6 + 0] = 0x07;
+            break;
+            case EVT_ID_LEAVE_POINT:
+            readReport.points[i * 6 + 0] = 0x06;
+            break;
             }
-
-            // Classify touch types
-            // I hope it doesn't conflict with Stylus
-            switch (touchType)
-            {
-            case TOUCH_TYPE_STYLUS:
-                DbgPrint("FTS521: TouchType->stylus \n");
-                break;
-            case TOUCH_TYPE_FINGER:
-                // It is a finger
-            case TOUCH_TYPE_GLOVE:
-                // It is a glove
-            case TOUCH_TYPE_PALM:
-                // Start the switch
-                switch (eventbuf[i * 8 + 0])
-                {
-                case EVT_ID_ENTER_POINT:
-                case EVT_ID_MOTION_POINT:
-                    readReport.points[i * 6 + 0] = 0x07;
-                    break;
-                case EVT_ID_LEAVE_POINT:
-                    readReport.points[i * 6 + 0] = 0x06;
-                    break;
-                }
-            case TOUCH_TYPE_INVALID:
-                break;
-            }
-
-            readReport.points[i * 6 + 1] = touchId;
-            readReport.points[i * 6 + 2] = x & 0xFF;
-            readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
-            readReport.points[i * 6 + 4] = y & 0xFF;
-            readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
-
-            DbgPrint("FTS521: Event:%02X \n", eventbuf[i * 8 + 0]);
-
+        case TOUCH_TYPE_INVALID:
+            break;
         }
+        
+        readReport.points[i * 6 + 1] = touchId;
+        readReport.points[i * 6 + 2] = x & 0xFF;
+        readReport.points[i * 6 + 3] = (x >> 8) & 0x0F;
+        readReport.points[i * 6 + 4] = y & 0xFF;
+        readReport.points[i * 6 + 5] = (y >> 8) & 0x0F;
 
-        status = WdfIoQueueRetrieveNextRequest(
-            pDevice->ManualQueue,
-            &request);
+        DbgPrint("FTS521: Event: 0x%02x - ID[%d], (x, y, z) = (%3d, %3d, %3d) type = %d, size = %d \n",
+                eventbuf[i * 8 + 0], touchId, x, y, z, touchType, area_size);
 
-        if (NT_SUCCESS(status)) {
-
-            readReport.reportId = CONTROL_FEATURE_REPORT_ID;
-
-            status = RequestCopyFromBuffer(request,
-                &readReport,
-                sizeof(readReport));
-
-            WdfRequestComplete(request, status);
-        }
     }
 
-    return fInterruptRecognized;
+    status = WdfIoQueueRetrieveNextRequest(
+        pDevice->ManualQueue,
+        &request);
+
+    if (NT_SUCCESS(status)) {
+
+        readReport.reportId = CONTROL_FEATURE_REPORT_ID;
+
+        status = RequestCopyFromBuffer(request,
+            &readReport,
+            sizeof(readReport));
+
+        WdfRequestComplete(request, status);
+    }
+    return TRUE;
 }
+
 VOID
 SpbDeviceOpen (
     IN  PDEVICE_CONTEXT  pDevice
@@ -2037,8 +2029,8 @@ SpbDeviceOpen (
     //FtsWriteData(pDevice, FTS521_GESTURE, 6);
 
     //Set delay time 
-    FtsWriteData(pDevice, FTS521_ONLY_SINGLE, 4);
-    FtsWriteData(pDevice, FTS521_SINGLE_DOUBLE, 4);
+    //FtsWriteData(pDevice, FTS521_ONLY_SINGLE, 4);
+    //FtsWriteData(pDevice, FTS521_SINGLE_DOUBLE, 4);
 
     //active scan off
     FTS521_SCAN_MODE[1] = 0x00; //active scan

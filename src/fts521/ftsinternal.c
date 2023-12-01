@@ -166,10 +166,8 @@ Return Value:
       remain = eventbuf[7];
       if (remain > 0)
       {
-          FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 8 * remain);
+          FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
       }
-      if (remain > 9)
-          remain = 9;
 
       for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {
 
@@ -186,7 +184,22 @@ Return Value:
           else {
               area_size = 1;
           }
-          Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+
+          switch (eventbuf[i * 8 + 0])
+          {
+              case EVT_ID_ENTER_POINT:
+                  DbgPrint("FTS521: my god \n");
+              case EVT_ID_MOTION_POINT:
+                  Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+                  break;
+              case EVT_ID_LEAVE_POINT:
+                  Data->States[i] = OBJECT_STATE_NOT_PRESENT;
+                  break;
+              case EVT_ID_CONTROLLER_READY:
+              case EVT_ID_STATUS_UPDATE:
+              case EVT_ID_NOEVENT:
+                  break;
+          }
 
           Data->Positions[i].X = x;
           Data->Positions[i].Y = y;

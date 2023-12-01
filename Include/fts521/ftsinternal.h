@@ -41,6 +41,28 @@
 // Ignore warning C4324: 'xxx' : structure was padded due to __declspec(align())
 #pragma warning (disable : 4324)
 
+#define EVT_ID_NOEVENT						0x00	/*No Events*/
+#define EVT_ID_CONTROLLER_READY				0x03	/*Controller ready, issued after a system reset.*/
+#define EVT_ID_ENTER_POINT					0x13	/*Touch enter in the sensing area*/
+#define EVT_ID_MOTION_POINT					0x23	/*Touch motion (a specific touch changed position)*/
+#define EVT_ID_LEAVE_POINT					0x33	/*Touch leave the sensing area*/
+#define EVT_ID_STATUS_UPDATE				0x43	/*FW report a system condition change*/
+#define EVT_ID_USER_REPORT					0x53	/*User related events triggered (keys, gestures, proximity etc)*/
+#define EVT_ID_DEBUG						0xE3	/*Debug Info*/
+#define EVT_ID_ERROR						0xF3	/*Error Event*/
+
+
+enum {
+	TCM_POWER_OFF = 0,
+	TCM_POWER_SLEEP,
+	TCM_POWER_WAKE,
+	TCM_POWER_ON,
+	TCM_POWER_HW_RESET_ASYNC,
+	TCM_POWER_HW_RESET_SYNC,
+	TCM_POWER_SW_RESET,
+	TCM_POWER_DSV_TOGGLE,
+	TCM_POWER_DSV_ALWAYS_ON,
+};
 
 typedef enum _FOCAL_TECH_GESTURE_ID
 {
@@ -178,6 +200,7 @@ typedef struct _FT5X_CONFIGURATION
 	FT5X_F11_CTRL_REGISTERS_LOGICAL TouchSettings;
 	UINT32 PepRemovesVoltageInD3;
 } FT5X_CONFIGURATION;
+
 
 typedef struct _FT5X_CONTROLLER_CONTEXT
 {

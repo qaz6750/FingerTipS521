@@ -23,7 +23,7 @@
 #include <Cross Platform Shim\compat.h>
 #include <internal.h>
 #include <controller.h>
-#include <ft5x\ftinternal.h>
+#include <fts521\ftsinternal.h>
 #include <hid.h>
 #include <hid.tmh>
 
@@ -31,9 +31,9 @@ const USHORT gOEMVendorID = 0x6674;    // "ft"
 const USHORT gOEMProductID = 0x3578;    // "5x"
 const USHORT gOEMVersionID = 3200;
 
-const PWSTR gpwstrManufacturerID = L"FocalTech";
-const PWSTR gpwstrProductID = L"5x06";
-const PWSTR gpwstrSerialNumber = L"5x06";
+const PWSTR gpwstrManufacturerID = L"FingerTipS521-Touch";
+const PWSTR gpwstrProductID = L"FTS521";
+const PWSTR gpwstrSerialNumber = L"FTS521";
 
 //
 // HID Report Descriptor for a touch device
@@ -123,7 +123,7 @@ TchSendReport(
 			"Confidence = %d, "
 			"Contact ID = %d, "
 			"X = %d, "
-			"Y = %d\n"
+			"Y = %d \n"
 			"Tip Switch = %d, "
 			"In Range = %d, "
 			"Confidence = %d, "

@@ -21,7 +21,7 @@
 
 --*/
 
-#include <ft5x\ftinternal.h>
+#include <fts521\ftsinternal.h>
 #include <registry.tmh>
 #include <internal.h>
 

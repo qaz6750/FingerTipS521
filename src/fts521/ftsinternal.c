@@ -24,7 +24,8 @@
 #include <ftsinternal.tmh>
 
 BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
-BYTE FTS521_READ_EVENTS[3] = { 0x86, 0x00, 0x00 };
+BYTE FTS521_READ_ONE_EVENTS[1] = { 0x85 };
+BYTE FTS521_READ_EVENTS[1] = { 0x86 };
 BYTE FTS521_SCAN_MODE[3] = { 0xA0, 0x00, 0x00 };
 BYTE FTS521_GESTURE[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
 BYTE FTS521_ONLY_SINGLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
@@ -77,19 +78,21 @@ Ft5xConfigureFunctions(
             "Writing Lockdown code into the IC done ");
     }
 
-    //active scan off
-    FTS521_SCAN_MODE[1] = 0x00; //active scan
-    FTS521_SCAN_MODE[2] = 0x00; //off
+    //active scan on
+    FTS521_SCAN_MODE[1] = 0x00;
+    FTS521_SCAN_MODE[2] = 0x01;
     SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
+    //SpbDeviceWrite(SpbContext, FTS521_GESTURE, 3);
+
     //low power scan off
-    FTS521_SCAN_MODE[1] = 0x01; //low power scan
-    FTS521_SCAN_MODE[2] = 0x00; //off
+    FTS521_SCAN_MODE[1] = 0x00;
+    FTS521_SCAN_MODE[2] = 0x00;
     SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
     //active scan on
-    FTS521_SCAN_MODE[1] = 0x00; //active scan
-    FTS521_SCAN_MODE[2] = 0x01; //on
+    FTS521_SCAN_MODE[1] = 0x00;
+    FTS521_SCAN_MODE[2] = 0x01;
     SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
     //FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, eventbuf, 3, 256);
@@ -97,19 +100,13 @@ Ft5xConfigureFunctions(
     return STATUS_SUCCESS;
 }
 
-struct fts521_abs_object {
-    unsigned short x;
-    unsigned short y;
-    unsigned short z;
-};
-
 #define TOUCH_MAX_FINGER_NUM 10
 
 NTSTATUS
 Ft5xGetObjectStatusFromControllerF12(
-      IN VOID* ControllerContext,
-      IN SPB_CONTEXT* SpbContext,
-      IN DETECTED_OBJECTS* Data
+    IN VOID* ControllerContext,
+    IN SPB_CONTEXT* SpbContext,
+    IN DETECTED_OBJECTS* Data
 )
 /*++
 
@@ -131,78 +128,66 @@ Return Value:
 
 --*/
 {
-      NTSTATUS status;
-      BYTE                  touchType;
-      BYTE                  touchId;
+    NTSTATUS status;
+    BYTE                  touchType;
+    BYTE                  touchId;
 
-      FT5X_CONTROLLER_CONTEXT* controller;
+    FT5X_CONTROLLER_CONTEXT* controller;
 
-      PFOCAL_TECH_EVENT_DATA controllerData = NULL;
-      controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
-      
-      int remain = 0;
-      int x = 0;
-      int y = 0;
-      int distance = 0;
-      int base =0 ;
-      int temp = 0;
-      int i = 0;
-      unsigned char         area_size;
+    PFOCAL_TECH_EVENT_DATA controllerData = NULL;
+    controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+
+    int remain = 0;
+    int x = 0;
+    int y = 0;
+    int distance = 0;
+    int base = 0;
+    int temp = 0;
+    int i = 0;
+    unsigned char         area_size;
 
 
-      status = FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
+    status = FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
 
-      if (!NT_SUCCESS(status))
-      {
-          Trace(
-              TRACE_LEVEL_ERROR,
-              TRACE_INTERRUPT,
-              "Error reading finger status data - 0x%08lX",
-              status);
+    if (!NT_SUCCESS(status))
+    {
+        Trace(
+            TRACE_LEVEL_ERROR,
+            TRACE_INTERRUPT,
+            "Error reading finger status data - 0x%08lX",
+            status);
 
-          goto exit;
-      }
+        goto exit;
+    }
 
-      remain = eventbuf[7];
-      if (remain > 0)
-      {
-          FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
-      }
+    if (remain > 0)
+    {
+        FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 1);
+    }
 
-      for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {
+    for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {
 
-          base = i * 8;
-          touchType = eventbuf[base + 1] & 0x0F;
-          touchId = (eventbuf[base + 1] & 0xF0) >> 4;
+        base = i * 8;
+        touchType = eventbuf[base + 1] & 0x0F;
+        touchId = (eventbuf[base + 1] & 0xF0) >> 4;
 
-          x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
-          y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
+        x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
+        y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
 
-          if (eventbuf[base + 0] == EVT_ID_MOTION_POINT) {
-              area_size = (eventbuf[base + 5] << 8) | eventbuf[base + 6];
-          }
-          else {
-              area_size = 1;
-          }
+            switch (eventbuf[i * 8 + 0])
+            {
+            case EVT_ID_ENTER_POINT:
+            case EVT_ID_MOTION_POINT:
+                Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+                break;
+            case EVT_ID_LEAVE_POINT:
+                Data->States[i] = OBJECT_STATE_NOT_PRESENT;
+                break;
+            }
+        
 
-          switch (eventbuf[i * 8 + 0])
-          {
-              case EVT_ID_ENTER_POINT:
-                  DbgPrint("FTS521: my god \n");
-              case EVT_ID_MOTION_POINT:
-                  Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
-                  break;
-              case EVT_ID_LEAVE_POINT:
-                  Data->States[i] = OBJECT_STATE_NOT_PRESENT;
-                  break;
-              case EVT_ID_CONTROLLER_READY:
-              case EVT_ID_STATUS_UPDATE:
-              case EVT_ID_NOEVENT:
-                  break;
-          }
-
-          Data->Positions[i].X = x;
-          Data->Positions[i].Y = y;
+        Data->Positions[i].X = x;
+        Data->Positions[i].Y = y;
 
           Trace(
               TRACE_LEVEL_ERROR,

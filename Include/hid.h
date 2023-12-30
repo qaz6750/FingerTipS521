@@ -182,10 +182,6 @@ TchReadReport(
 		USAGE, 0x42, /* Usage (Tip Switch) */ \
 		LOGICAL_MINIMUM, 0x00, /* Logical Minimum (0) */ \
 		LOGICAL_MAXIMUM, 0x01, /* Logical Maximum (1) */ \
-		PHYSICAL_MINIMUM, 0x00, /* Physical Minimum (0) */ \
-		PHYSICAL_MAXIMUM, 0x01, /* Physical Maximum (1) */ \
-		UNIT, 0x00, /* Unit (None) */ \
-		UNIT_EXPONENT, 0x00, /* Unit Exponent (0) */ \
 		REPORT_SIZE, 0x01, /* Report Size (1) */ \
 		REPORT_COUNT, 0x01, /* Report Count (1) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
@@ -196,25 +192,18 @@ TchReadReport(
 		REPORT_COUNT, 0x05, /* Report Count (5) */ \
 		INPUT, 0x03, /* Input (Const,Var,Abs,No Wrap,Linear,Preferred State,No Null Position) */ \
 		USAGE, 0x51, /* Usage (Contract Identifier) */ \
-		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum (0) */ \
 		REPORT_SIZE, 0x08, /* Report Size (8) */ \
 		REPORT_COUNT, 0x01, /* Report Count (1) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		USAGE_PAGE, 0x01, /* Usage Page (Generic Desktop Ctrls) */ \
 		USAGE, 0x30, /* Usage (X) */ \
 		LOGICAL_MAXIMUM_2, X_MASK, /* Logical Maximum (1440) */ \
-		PHYSICAL_MAXIMUM_2, X_MASK, /* Physical Maximum: 7.056 */ \
-		UNIT, 0x11, /* Unit (System: SI Linear, Length: Centimeter) */ \
-		UNIT_EXPONENT, 0x0d, /* Unit Exponent: -3 */ \
 		REPORT_SIZE, 0x10, /* Report Size (16) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		USAGE, 0x31, /* Usage (Y) */ \
 		LOGICAL_MAXIMUM_2, Y_MASK, /* Logical Maximum (2560) */ \
-		PHYSICAL_MAXIMUM_2, Y_MASK, /* Physical Maximum: 12.544 */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum: 0 */ \
-		UNIT_EXPONENT, 0x00, /* Unit exponent: 0 */ \
-		UNIT, 0x00, /* Unit: None */ \
 	END_COLLECTION /* End Collection */
 
 #define FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_2 \
@@ -222,9 +211,6 @@ TchReadReport(
 		USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
 		USAGE, 0x42, /* Usage (Tip Switch) */ \
 		LOGICAL_MAXIMUM, 0x01, /* Logical Maximum (1) */ \
-		PHYSICAL_MAXIMUM, 0x01, /* Physical Maximum (1) */ \
-		UNIT, 0x00, /* Unit (None) */ \
-		UNIT_EXPONENT, 0x00, /* Unit Exponent (0) */ \
 		REPORT_SIZE, 0x01, /* Report Size (1) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		USAGE, 0x32, /* Usage (In Range) */ \
@@ -234,25 +220,17 @@ TchReadReport(
 		REPORT_COUNT, 0x05, /* Report Count (5) */ \
 		INPUT, 0x03, /* Input (Const,Var,Abs,No Wrap,Linear,Preferred State,No Null Position) */ \
 		USAGE, 0x51, /* Usage (Contract Identifier) */ \
-		PHYSICAL_MAXIMUM_2, Y_MASK, /* Physical Maximum: 12.544 */ \
-		UNIT, 0x11, /* Unit (System: SI Linear, Length: Centimeter) */ \
-		UNIT_EXPONENT, 0x0d, /* Unit Exponent: -3 */ \
 		REPORT_SIZE, 0x08, /* Report Size (8) */ \
 		REPORT_COUNT, 0x01, /* Report Count (1) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		USAGE_PAGE, 0x01, /* Usage Page (Generic Desktop Ctrls) */ \
 		USAGE, 0x30, /* Usage (X) */ \
 		LOGICAL_MAXIMUM_2, X_MASK, /* Logical Maximum (1440) */ \
-		PHYSICAL_MAXIMUM_2, X_MASK, /* Physical Maximum: 7.056 */ \
 		REPORT_SIZE, 0x10, /* Report Size (16) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 		USAGE, 0x31, /* Usage (Y) */ \
 		LOGICAL_MAXIMUM_2, Y_MASK, /* Logical Maximum (2560) */ \
-		PHYSICAL_MAXIMUM_2, Y_MASK, /* Physical Maximum: 12.544 */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
-		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum: 0 */ \
-		UNIT_EXPONENT, 0x00, /* Unit exponent: 0 */ \
-		UNIT, 0x00, /* Unit: None */ \
 	END_COLLECTION /* End Collection */
 
 #define FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1 \

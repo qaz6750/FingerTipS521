@@ -1790,12 +1790,12 @@ TchRegistryGetControllerSettings(
 
 --*/
 {
-    FT5X_CONTROLLER_CONTEXT* controller;
+    FTS521_CONTROLLER_CONTEXT* controller;
     NTSTATUS status;
 
     UNREFERENCED_PARAMETER(FxDevice);
 
-    controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+    controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
     RtlCopyMemory(
         &controller->Config,

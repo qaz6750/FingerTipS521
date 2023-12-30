@@ -51,32 +51,6 @@
 #define EVT_ID_DEBUG						0xE3	/*Debug Info*/
 #define EVT_ID_ERROR						0xF3	/*Error Event*/
 
-
-typedef enum _FOCAL_TECH_GESTURE_ID
-{
-      FOCAL_TECH_GESTURE_NONE = 0x00,
-      FOCAL_TECH_GESTURE_MOVE_UP = 0x10,
-      FOCAL_TECH_GESTURE_MOVE_RIGHT = 0x14,
-      FOCAL_TECH_GESTURE_MOVE_DOWN = 0x18,
-      FOCAL_TECH_GESTURE_MOVE_LEFT = 0x1C,
-      FOCAL_TECH_GESTURE_ZOOM_IN = 0x48,
-      FOCAL_TECH_GESTURE_ZOOM_OUT = 0x49
-} FOCAL_TECH_GESTURE_ID;
-
-typedef enum _FOCAL_TECH_DEVICE_MODE
-{
-      FOCAL_TECH_MODE_WORKING = 0,
-      FOCAL_TECH_MODE_TEST = 4
-} FOCAL_TECH_DEVICE_MODE;
-
-typedef enum _FOCAL_TECH_EVENT_FLAG
-{
-      FOCAL_TECH_EVENT_PRESS_DOWN = 0,
-      FOCAL_TECH_EVENT_LIFT_UP = 1,
-      FOCAL_TECH_EVENT_CONTACT = 2,
-      FOCAL_TECH_EVENT_NONE = 3
-} FOCAL_TECH_EVENT_FLAG;
-
 typedef struct _FOCAL_TECH_TOUCH_DATA
 {
 	BYTE PositionX_High : 4;
@@ -129,10 +103,6 @@ typedef struct _RM4_F01_CTRL_REGISTERS_LOGICAL
 
 #define FT5X_MILLISECONDS_TO_TENTH_MILLISECONDS(n) n/10
 #define FT5X_SECONDS_TO_HALF_SECONDS(n) 2*n
-
-//
-// Function $11 - 2-D Touch Sensor
-//
 
 //
 // Logical structure for getting registry config settings
@@ -190,7 +160,7 @@ typedef struct _FT5X_CONFIGURATION
 } FT5X_CONFIGURATION;
 
 
-typedef struct _FT5X_CONTROLLER_CONTEXT
+typedef struct _FTS521_CONTROLLER_CONTEXT
 {
 	WDFDEVICE FxDevice;
 	WDFWAITLOCK ControllerLock;
@@ -211,30 +181,30 @@ typedef struct _FT5X_CONTROLLER_CONTEXT
 	BYTE MaxFingers;
 
     int HidQueueCount;
-} FT5X_CONTROLLER_CONTEXT;
+} FTS521_CONTROLLER_CONTEXT;
 
 NTSTATUS
-Ft5xBuildFunctionsTable(
-	IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521BuildFunctionsTable(
+	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
 	IN SPB_CONTEXT* SpbContext
 );
 
 NTSTATUS
-Ft5xChangePage(
-	IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangePage(
+	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
 	IN SPB_CONTEXT* SpbContext,
 	IN int DesiredPage
 );
 
 NTSTATUS
-Ft5xConfigureFunctions(
-	IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ConfigureFunctions(
+	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
 	IN SPB_CONTEXT* SpbContext
 );
 
 NTSTATUS
-Ft5xServiceInterrupts(
-	IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ServiceInterrupts(
+	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
 	IN SPB_CONTEXT* SpbContext,
 	IN PREPORT_CONTEXT ReportContext
 );
@@ -253,43 +223,43 @@ typedef enum _FT5X_F12_REPORTING_FLAGS
 #pragma pack(pop)
 
 NTSTATUS
-Ft5xSetReportingFlagsF12(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521SetReportingFlags(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR NewMode,
     OUT UCHAR* OldMode
 );
 
 NTSTATUS
-Ft5xChangeChargerConnectedState(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangeChargerConnectedState(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR ChargerConnectedState
 );
 
 NTSTATUS
-Ft5xChangeSleepState(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangeSleepState(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR SleepState
 );
 
 NTSTATUS
 Ft5xGetFirmwareVersion(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext
 );
 
 NTSTATUS
-Ft5xCheckInterrupts(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521CheckInterrupts(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN ULONG* InterruptStatus
 );
 
 NTSTATUS
-Ft5xConfigureInterruptEnable(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ConfigureInterruptEnable(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext
 );
 

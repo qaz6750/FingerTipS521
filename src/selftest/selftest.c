@@ -244,7 +244,7 @@ Return Value:
                 goto exit;
             }
 
-            status = Ft5xChangePage(
+            status = Fts521ChangePage(
                 devContext->TouchContext,
                 &devContext->I2CContext,
                 *requestedPage);

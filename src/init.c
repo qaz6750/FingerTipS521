@@ -49,18 +49,18 @@ TchStartDevice(
 
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	FTS521_CONTROLLER_CONTEXT* controller;
 	ULONG interruptStatus;
 	NTSTATUS status;
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 	interruptStatus = 0;
 	status = STATUS_SUCCESS;
 
 	//
 	// Populate context with FT5X function descriptors
 	//
-	status = Ft5xBuildFunctionsTable(
+	status = Fts521BuildFunctionsTable(
 		ControllerContext,
 		SpbContext);
 
@@ -77,7 +77,7 @@ TchStartDevice(
 	//
 	// Initialize FT5X function control registers
 	//
-	status = Ft5xConfigureFunctions(
+	status = Fts521ConfigureFunctions(
 		ControllerContext,
 		SpbContext);
 
@@ -92,7 +92,7 @@ TchStartDevice(
 		goto exit;
 	}
 
-	status = Ft5xConfigureInterruptEnable(
+	status = Fts521ConfigureInterruptEnable(
 		ControllerContext,
 		SpbContext);
 
@@ -109,7 +109,7 @@ TchStartDevice(
 	//
 	// Clear any pending interrupts
 	//
-	status = Ft5xCheckInterrupts(
+	status = Fts521CheckInterrupts(
 		ControllerContext,
 		SpbContext,
 		&interruptStatus
@@ -150,11 +150,11 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	FTS521_CONTROLLER_CONTEXT* controller;
 
 	UNREFERENCED_PARAMETER(SpbContext);
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
 	return STATUS_SUCCESS;
 }
@@ -180,12 +180,12 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* context;
+	FTS521_CONTROLLER_CONTEXT* context;
 	NTSTATUS status;
 	
 	context = ExAllocatePoolWithTag(
 		NonPagedPoolNx,
-		sizeof(FT5X_CONTROLLER_CONTEXT),
+		sizeof(FTS521_CONTROLLER_CONTEXT),
 		TOUCH_POOL_TAG);
 
 	if (NULL == context)
@@ -199,7 +199,7 @@ Return Value:
 		goto exit;
 	}
 
-	RtlZeroMemory(context, sizeof(FT5X_CONTROLLER_CONTEXT));
+	RtlZeroMemory(context, sizeof(FTS521_CONTROLLER_CONTEXT));
 	context->FxDevice = FxDevice;
 
 	//
@@ -254,9 +254,9 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	FTS521_CONTROLLER_CONTEXT* controller;
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
 	if (controller != NULL)
 	{

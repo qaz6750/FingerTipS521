@@ -34,8 +34,8 @@ BYTE FTS521_SINGLE_DOUBLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
 BYTE eventbuf[256];
 
 NTSTATUS
-Ft5xBuildFunctionsTable(
-      IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521BuildFunctionsTable(
+      IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
       IN SPB_CONTEXT* SpbContext
 )
 {
@@ -46,8 +46,8 @@ Ft5xBuildFunctionsTable(
 }
 
 NTSTATUS
-Ft5xChangePage(
-      IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangePage(
+      IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
       IN SPB_CONTEXT* SpbContext,
       IN int DesiredPage
 )
@@ -60,14 +60,14 @@ Ft5xChangePage(
 }
 
 NTSTATUS
-Ft5xConfigureFunctions(
-      IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ConfigureFunctions(
+      IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
       IN SPB_CONTEXT* SpbContext
 )
 {
     NTSTATUS status;
-    FT5X_CONTROLLER_CONTEXT* controller;
-    controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+    FTS521_CONTROLLER_CONTEXT* controller;
+    controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
     status = SpbDeviceWrite(SpbContext, FTS521_LOCKDOWN, 3);
     if (NT_SUCCESS(status))
@@ -103,7 +103,7 @@ Ft5xConfigureFunctions(
 #define TOUCH_MAX_FINGER_NUM 10
 
 NTSTATUS
-Ft5xGetObjectStatusFromControllerF12(
+Fts521GetObjectStatusFromControllerF12(
     IN VOID* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN DETECTED_OBJECTS* Data
@@ -132,20 +132,16 @@ Return Value:
     BYTE                  touchType;
     BYTE                  touchId;
 
-    FT5X_CONTROLLER_CONTEXT* controller;
+    FTS521_CONTROLLER_CONTEXT* controller;
 
     PFOCAL_TECH_EVENT_DATA controllerData = NULL;
-    controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+    controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
     int remain = 0;
     int x = 0;
     int y = 0;
-    int distance = 0;
     int base = 0;
-    int temp = 0;
     int i = 0;
-    unsigned char         area_size;
-
 
     status = FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
 
@@ -203,7 +199,7 @@ Return Value:
 
 NTSTATUS
 TchServiceObjectInterrupts(
-      IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+      IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
       IN SPB_CONTEXT* SpbContext,
       IN PREPORT_CONTEXT ReportContext
 )
@@ -217,7 +213,7 @@ TchServiceObjectInterrupts(
       // See if new touch data is available
       //
 
-      status = Ft5xGetObjectStatusFromControllerF12(
+      status = Fts521GetObjectStatusFromControllerF12(
             ControllerContext,
             SpbContext,
             &data
@@ -255,8 +251,8 @@ exit:
 
 
 NTSTATUS
-Ft5xServiceInterrupts(
-      IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ServiceInterrupts(
+      IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
       IN SPB_CONTEXT* SpbContext,
       IN PREPORT_CONTEXT ReportContext
 )
@@ -269,8 +265,8 @@ Ft5xServiceInterrupts(
 }
 
 NTSTATUS
-Ft5xSetReportingFlagsF12(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521SetReportingFlags(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR NewMode,
     OUT UCHAR* OldMode
@@ -285,8 +281,8 @@ Ft5xSetReportingFlagsF12(
 }
 
 NTSTATUS
-Ft5xChangeChargerConnectedState(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangeChargerConnectedState(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR ChargerConnectedState
 )
@@ -299,8 +295,8 @@ Ft5xChangeChargerConnectedState(
 }
 
 NTSTATUS
-Ft5xChangeSleepState(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ChangeSleepState(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN UCHAR SleepState
 )
@@ -313,8 +309,8 @@ Ft5xChangeSleepState(
 }
 
 NTSTATUS
-Ft5xCheckInterrupts(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521CheckInterrupts(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN ULONG* InterruptStatus
 )
@@ -327,8 +323,8 @@ Ft5xCheckInterrupts(
 }
 
 NTSTATUS
-Ft5xConfigureInterruptEnable(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
+Fts521ConfigureInterruptEnable(
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext
 )
 {

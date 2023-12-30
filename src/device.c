@@ -100,7 +100,7 @@ OnInterruptIsr(
     //
     // Service touch interrupts.
     //
-    status = Ft5xServiceInterrupts(
+    status = Fts521ServiceInterrupts(
         devContext->TouchContext,
         &devContext->I2CContext,
         &devContext->ReportContext);

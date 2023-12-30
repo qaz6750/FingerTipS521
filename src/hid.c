@@ -44,7 +44,7 @@ const UCHAR gReportDescriptor[] = {
 //	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC2,
 //	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC3,
 //	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC4,
-	FOCALTECH_FT5X_DIGITIZER_FINGER
+	FINGERTIPS_FTS521_FINGER
 //	FOCALTECH_FT5X_DIGITIZER_REPORTMODE,
 //	FOCALTECH_FT5X_DIGITIZER_KEYPAD,
 //	FOCALTECH_FT5X_DIGITIZER_STYLUS
@@ -288,7 +288,7 @@ Return Value:
 	//
 	if (devContext->ServiceInterruptsAfterD0Entry == TRUE)
 	{
-		Ft5xServiceInterrupts(
+		Fts521ServiceInterrupts(
 			devContext->TouchContext,
 			&devContext->I2CContext,
 			&devContext->ReportContext);
@@ -390,12 +390,12 @@ TchGenerateHidReportDescriptor(
 )
 {
 	PDEVICE_EXTENSION devContext;
-	FT5X_CONTROLLER_CONTEXT* touchContext;
+	FTS521_CONTROLLER_CONTEXT* touchContext;
 	NTSTATUS status;
 
 	devContext = GetDeviceContext(Device);
 
-	touchContext = (FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext;
+	touchContext = (FTS521_CONTROLLER_CONTEXT*)devContext->TouchContext;
 
 	PUCHAR hidReportDescBuffer = (PUCHAR)ExAllocatePoolWithTag(
 		NonPagedPool,
@@ -905,9 +905,9 @@ Return Value:
 		capsReport->MaximumContactPoints = PTP_MAX_CONTACT_POINTS;
 		capsReport->ReportID = REPORTID_DEVICE_CAPS;
 
-		if (devContext->TouchContext != NULL && ((FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers != 0)
+		if (devContext->TouchContext != NULL && ((FTS521_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers != 0)
 		{
-			capsReport->MaximumContactPoints = ((FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers;
+			capsReport->MaximumContactPoints = ((FTS521_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers;
 		}
 
 		Trace(

@@ -37,7 +37,7 @@ TchPowerSettingCallback(
 {
     NTSTATUS status = STATUS_SUCCESS;
     PDEVICE_EXTENSION devContext = NULL;
-    FT5X_CONTROLLER_CONTEXT* ControllerContext = NULL;
+    FTS521_CONTROLLER_CONTEXT* ControllerContext = NULL;
     SPB_CONTEXT* SpbContext = NULL;
 
     if (Context == NULL)
@@ -53,7 +53,7 @@ TchPowerSettingCallback(
     }
 
     devContext = (PDEVICE_EXTENSION)Context;
-    ControllerContext = (FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext;
+    ControllerContext = (FTS521_CONTROLLER_CONTEXT*)devContext->TouchContext;
     SpbContext = &(devContext->I2CContext);
 
     //
@@ -88,7 +88,7 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "On Battery Power");
 
-            status = Ft5xChangeChargerConnectedState(
+            status = Fts521ChangeChargerConnectedState(
                 ControllerContext,
                 SpbContext,
                 0
@@ -112,7 +112,7 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "On External Power");
 
-            status = Ft5xChangeChargerConnectedState(
+            status = Fts521ChangeChargerConnectedState(
                 ControllerContext,
                 SpbContext,
                 1
@@ -185,7 +185,7 @@ TchPowerSettingCallback(
                 &GestureEnabled,
                 sizeof(DWORD))) && GestureEnabled == 1)
             {
-                status = Ft5xSetReportingFlagsF12(
+                status = Fts521SetReportingFlags(
                     ControllerContext,
                     SpbContext,
                     FT5X_F12_REPORTING_WAKEUP_GESTURE_MODE,
@@ -232,7 +232,7 @@ TchPowerSettingCallback(
                 goto exit;
             }
 
-            status = Ft5xSetReportingFlagsF12(
+            status = Fts521SetReportingFlags(
                 ControllerContext,
                 SpbContext,
                 FT5X_F12_REPORTING_CONTINUOUS_MODE,
@@ -292,10 +292,10 @@ Return Value:
 
 --*/
 {    
-    FT5X_CONTROLLER_CONTEXT* controller;
+    FTS521_CONTROLLER_CONTEXT* controller;
     NTSTATUS status;
 
-    controller = (FT5X_CONTROLLER_CONTEXT*) ControllerContext;
+    controller = (FTS521_CONTROLLER_CONTEXT*) ControllerContext;
 
     //
     // Check if we were already on
@@ -310,7 +310,7 @@ Return Value:
     //
     // Attempt to put the controller into operating mode 
     //
-    status = Ft5xChangeSleepState(
+    status = Fts521ChangeSleepState(
         controller,
         SpbContext,
         FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING);
@@ -353,10 +353,10 @@ Return Value:
 
 --*/
 {
-    FT5X_CONTROLLER_CONTEXT* controller;
+    FTS521_CONTROLLER_CONTEXT* controller;
     NTSTATUS status;
 
-    controller = (FT5X_CONTROLLER_CONTEXT*) ControllerContext;
+    controller = (FTS521_CONTROLLER_CONTEXT*) ControllerContext;
 
     //
     // Interrupts are now disabled but the ISR may still be
@@ -368,7 +368,7 @@ Return Value:
     //
     // Put the chip in sleep mode
     //
-    status = Ft5xChangeSleepState(
+    status = Fts521ChangeSleepState(
         ControllerContext,
         SpbContext,
         FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_SLEEPING);

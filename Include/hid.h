@@ -177,7 +177,7 @@ TchReadReport(
 #define X_MASK 0x38, 0x04
 #define Y_MASK 0x24, 0x09
 
-#define FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_1 \
+#define FINGERTIPS_FTS521_FINGER_CONTACT_1 \
 	BEGIN_COLLECTION, 0x02, /* Collection (Logical) */ \
 		USAGE, 0x42, /* Usage (Tip Switch) */ \
 		LOGICAL_MINIMUM, 0x00, /* Logical Minimum (0) */ \
@@ -206,7 +206,7 @@ TchReadReport(
 		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum: 0 */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_2 \
+#define FINGERTIPS_FTS521_FINGER_CONTACT_2 \
 	BEGIN_COLLECTION, 0x02, /* Collection (Logical) */ \
 		USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
 		USAGE, 0x42, /* Usage (Tip Switch) */ \
@@ -231,6 +231,33 @@ TchReadReport(
 		USAGE, 0x31, /* Usage (Y) */ \
 		LOGICAL_MAXIMUM_2, Y_MASK, /* Logical Maximum (2560) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
+	END_COLLECTION /* End Collection */
+
+#define FINGERTIPS_FTS521_FINGER \
+	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
+	USAGE, 0x04, /* Usage (Touch Screen) */ \
+	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
+		REPORT_ID, REPORTID_FINGER, /* Report ID (1) */ \
+		USAGE, 0x22, /* Usage (Finger) */ \
+		FINGERTIPS_FTS521_FINGER_CONTACT_1, /* Finger Contact (1) */ \
+		USAGE, 0x00, /* Usage (Undefined) */ \
+		FINGERTIPS_FTS521_FINGER_CONTACT_2, /* Finger Contact (2) */ \
+		USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
+		USAGE, 0x54, /* Usage (Contact Count) */ \
+		REPORT_SIZE, 0x08, /* Report Size (8) */ \
+		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
+		REPORT_ID, REPORTID_DEVICE_CAPS, /* Report ID (8) */ \
+		USAGE, 0x55, /* Usage (Maximum Contacts) */ \
+		LOGICAL_MAXIMUM, 0x02, /* Logical Maximum (2) */ \
+		FEATURE, 0x02, /* Feature: (Data, Var, Abs) */ \
+		USAGE_PAGE_1, 0x00, 0xff, \
+		REPORT_ID, REPORTID_PTPHQA, \
+		USAGE, 0xc5, \
+		LOGICAL_MINIMUM, 0x00, \
+		LOGICAL_MAXIMUM_2, 0xff, 0x00, \
+		REPORT_SIZE, 0x08, \
+		REPORT_COUNT_2, 0x00, 0x01, \
+		FEATURE, 0x02, \
 	END_COLLECTION /* End Collection */
 
 #define FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1 \
@@ -282,6 +309,23 @@ TchReadReport(
 		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum: 0 */ \
 		UNIT_EXPONENT, 0x00, /* Unit exponent: 0 */ \
 		UNIT, 0x00, /* Unit: None */ \
+	END_COLLECTION /* End Collection */
+
+#define FOCALTECH_FT5X_DIGITIZER_STYLUS \
+	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
+	USAGE, 0x02, /* Usage (Pen) */ \
+	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
+		REPORT_ID, REPORTID_STYLUS, /* Report ID (11) */ \
+		USAGE, 0x20, /* Usage (Stylus) */ \
+		FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1, /* Stylus (1) */ \
+		USAGE_PAGE_1, 0x00, 0xff, \
+		REPORT_ID, REPORTID_PENHQA, \
+		USAGE, 0xc5, \
+		LOGICAL_MINIMUM, 0x00, \
+		LOGICAL_MAXIMUM_2, 0xff, 0x00, \
+		REPORT_SIZE, 0x08, \
+		REPORT_COUNT_2, 0x00, 0x01, \
+		FEATURE, 0x02, \
 	END_COLLECTION /* End Collection */
 
 #define FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC1 \
@@ -356,32 +400,6 @@ TchReadReport(
 		FEATURE, 0x02, /* Feature: (Data, Var, Abs) */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_FINGER \
-	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
-	USAGE, 0x04, /* Usage (Touch Screen) */ \
-	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
-		REPORT_ID, REPORTID_FINGER, /* Report ID (1) */ \
-		USAGE, 0x22, /* Usage (Finger) */ \
-		FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_1, /* Finger Contact (1) */ \
-		USAGE, 0x00, /* Usage (Undefined) */ \
-		FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_2, /* Finger Contact (2) */ \
-		USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
-		USAGE, 0x54, /* Usage (Contact Count) */ \
-		REPORT_SIZE, 0x08, /* Report Size (8) */ \
-		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
-		REPORT_ID, REPORTID_DEVICE_CAPS, /* Report ID (8) */ \
-		USAGE, 0x55, /* Usage (Maximum Contacts) */ \
-		LOGICAL_MAXIMUM, 0x02, /* Logical Maximum (2) */ \
-		FEATURE, 0x02, /* Feature: (Data, Var, Abs) */ \
-		USAGE_PAGE_1, 0x00, 0xff, \
-		REPORT_ID, REPORTID_PTPHQA, \
-		USAGE, 0xc5, \
-		LOGICAL_MINIMUM, 0x00, \
-		LOGICAL_MAXIMUM_2, 0xff, 0x00, \
-		REPORT_SIZE, 0x08, \
-		REPORT_COUNT_2, 0x00, 0x01, \
-		FEATURE, 0x02, \
-	END_COLLECTION /* End Collection */
 
 #define FOCALTECH_FT5X_DIGITIZER_REPORTMODE \
 	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
@@ -463,22 +481,6 @@ TchReadReport(
 		INPUT, 0x03, /* Input (Const,Var,Abs,No Wrap,Linear,Preferred State,No Null Position) */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_STYLUS \
-	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
-	USAGE, 0x02, /* Usage (Pen) */ \
-	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
-		REPORT_ID, REPORTID_STYLUS, /* Report ID (11) */ \
-		USAGE, 0x20, /* Usage (Stylus) */ \
-		FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1, /* Stylus (1) */ \
-		USAGE_PAGE_1, 0x00, 0xff, \
-		REPORT_ID, REPORTID_PENHQA, \
-		USAGE, 0xc5, \
-		LOGICAL_MINIMUM, 0x00, \
-		LOGICAL_MAXIMUM_2, 0xff, 0x00, \
-		REPORT_SIZE, 0x08, \
-		REPORT_COUNT_2, 0x00, 0x01, \
-		FEATURE, 0x02, \
-	END_COLLECTION /* End Collection */
 
 #define DEFAULT_PTP_HQA_BLOB \
 	0xfc, 0x28, 0xfe, 0x84, 0x40, 0xcb, 0x9a, 0x87, \

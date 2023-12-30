@@ -424,7 +424,6 @@
     <ClCompile Include="..\src\report.c" />
     <ClCompile Include="..\src\touch_power\touch_power.c" />
     <ClCompile Include="..\src\selftest\selftest.c" />
-    <ClCompile Include="..\src\selftest\enoselftest.c" />
     <ClCompile Include="..\src\device.c" />
     <ClCompile Include="..\src\driver.c" />
     <ClCompile Include="..\src\hid.c" />
@@ -447,7 +446,6 @@
     <ClInclude Include="..\include\report.h" />
     <ClInclude Include="..\include\touch_power\public.h" />
     <ClInclude Include="..\include\touch_power\touch_power.h" />
-    <ClInclude Include="..\include\selftest\enoselftest.h" />
     <ClInclude Include="..\include\selftest\selftest.h" />
     <ClInclude Include="..\include\controller.h" />
     <ClInclude Include="..\include\device.h" />

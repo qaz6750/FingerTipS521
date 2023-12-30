@@ -162,7 +162,7 @@ Return Value:
 
     if (remain > 0)
     {
-        FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 1);
+        FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
     }
 
     for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {

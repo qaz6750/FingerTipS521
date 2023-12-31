@@ -414,6 +414,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Inf Include="..\src\FingerTipS521-FodReport.inf" />
     <Inf Exclude="@(Inf)" Include="..\src\FingerTipS521-Touch.inf" />
     <FilesToPackage Include="$(TargetPath)" Condition="'$(ConfigurationType)'=='Driver' or '$(ConfigurationType)'=='DynamicLibrary'" />
   </ItemGroup>

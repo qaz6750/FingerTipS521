@@ -97,6 +97,9 @@
     <Inf Include="..\src\FingerTipS521-Touch.inf">
       <Filter>Driver Files</Filter>
     </Inf>
+    <Inf Include="..\src\FingerTipS521-FodReport.inf">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\controller.h">

@@ -379,8 +379,8 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES objectAttributes;
     WDF_IO_QUEUE_CONFIG queueConfig;
 
-    DECLARE_CONST_UNICODE_STRING(deviceId, L"{3a0ac59a-4d8a-4875-b7ea-304771ff9b9a}\\NokiaTouch\0");
-    DECLARE_CONST_UNICODE_STRING(hardwareId, L"NOKIA_TOUCH");
+    DECLARE_CONST_UNICODE_STRING(deviceId, L"{4a0ac59a-4d8a-4875-b7ea-304771ff9b9a}\\FTS521_FOD_Report\0");
+    DECLARE_CONST_UNICODE_STRING(hardwareId, L"FTS521_FOD_Report");
     DECLARE_CONST_UNICODE_STRING(instanceId, L"0\0");
 
     devContext = GetDeviceContext(Device);

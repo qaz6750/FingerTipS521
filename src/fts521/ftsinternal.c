@@ -95,8 +95,6 @@ Fts521ConfigureFunctions(
     FTS521_SCAN_MODE[2] = 0x01;
     SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
-    //FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, eventbuf, 3, 256);
-
     return STATUS_SUCCESS;
 }
 

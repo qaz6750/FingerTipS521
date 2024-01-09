@@ -422,13 +422,13 @@
     <ClCompile Include="..\src\Cross Platform Shim\bitops.c" />
     <ClCompile Include="..\src\Cross Platform Shim\hweight.c" />
     <ClCompile Include="..\src\fts521\ftsinternal.c" />
+    <ClCompile Include="..\src\idle.c" />
     <ClCompile Include="..\src\report.c" />
     <ClCompile Include="..\src\touch_power\touch_power.c" />
     <ClCompile Include="..\src\selftest\selftest.c" />
     <ClCompile Include="..\src\device.c" />
     <ClCompile Include="..\src\driver.c" />
     <ClCompile Include="..\src\hid.c" />
-    <ClCompile Include="..\src\idle.c" />
     <ClCompile Include="..\src\init.c" />
     <ClCompile Include="..\src\power.c" />
     <ClCompile Include="..\src\queue.c" />

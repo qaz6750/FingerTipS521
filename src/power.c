@@ -159,6 +159,12 @@ TchPowerSettingCallback(
         DWORD GestureEnabled = 0;
 
         switch (DisplayState)
+        // Please note:
+        // 1.This method is not applicable to FingerTipS-Touch521 touch 
+        //   chip power management, so do not change its power status.
+        // 2.Meanwhile, keeping the power on will increase power consumption, 
+        //   which is currently an unavoidable issue that we hope to improve 
+        //   in the future
         {
         case 0:
             Trace(
@@ -166,6 +172,8 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "The Display is Off");
 
+            
+            /*
             status = PowerToggle(&devContext->TouchPowerContext, 0);
 
             if (!NT_SUCCESS(status))
@@ -177,42 +185,7 @@ TchPowerSettingCallback(
                     status);
                 goto exit;
             }
-
-            if (NT_SUCCESS(RtlReadRegistryValue(
-                (PCWSTR)L"\\Registry\\Machine\\SOFTWARE\\OEM\\Nokia\\Touch\\WakeupGesture",
-                (PCWSTR)L"Enabled",
-                REG_DWORD,
-                &GestureEnabled,
-                sizeof(DWORD))) && GestureEnabled == 1)
-            {
-                status = Fts521SetReportingFlags(
-                    ControllerContext,
-                    SpbContext,
-                    FT5X_F12_REPORTING_WAKEUP_GESTURE_MODE,
-                    NULL
-                );
-
-                if (!NT_SUCCESS(status))
-                {
-                    Trace(
-                        TRACE_LEVEL_ERROR,
-                        TRACE_POWER,
-                        "Error Changing Reporting Mode for F12 - 0x%08lX",
-                        status);
-                    goto exit;
-                }
-            }
-
-            if (!NT_SUCCESS(status))
-            {
-                Trace(
-                    TRACE_LEVEL_ERROR,
-                    TRACE_POWER,
-                    "Error Changing Reporting Mode for F12 - 0x%08lX",
-                    status);
-                goto exit;
-            }
-
+            */
             break;
         case 1:
             Trace(
@@ -220,6 +193,7 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "The Display is On");
 
+            /*
             status = PowerToggle(&devContext->TouchPowerContext, 1);
 
             if (!NT_SUCCESS(status))
@@ -231,23 +205,7 @@ TchPowerSettingCallback(
                     status);
                 goto exit;
             }
-
-            status = Fts521SetReportingFlags(
-                ControllerContext,
-                SpbContext,
-                FT5X_F12_REPORTING_CONTINUOUS_MODE,
-                NULL
-            );
-
-            if (!NT_SUCCESS(status))
-            {
-                Trace(
-                    TRACE_LEVEL_ERROR,
-                    TRACE_POWER,
-                    "Error Changing Reporting Mode for F12 - 0x%08lX",
-                    status);
-                goto exit;
-            }
+            */
             break;
         case 2:
             Trace(

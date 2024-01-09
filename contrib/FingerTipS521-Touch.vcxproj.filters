@@ -48,9 +48,6 @@
     <ClCompile Include="..\src\hid.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\idle.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -86,6 +83,9 @@
     </ClCompile>
     <ClCompile Include="..\src\fts521\ftsinternal.c">
       <Filter>Source Files\fts521</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\idle.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -69,7 +69,7 @@ Fts521ConfigureFunctions(
     FTS521_CONTROLLER_CONTEXT* controller;
     controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
-    status = SpbDeviceWrite(SpbContext, FTS521_LOCKDOWN, 3);
+    status = FtsWrite(SpbContext, FTS521_LOCKDOWN, 3);
     if (NT_SUCCESS(status))
     {
         Trace(
@@ -81,19 +81,19 @@ Fts521ConfigureFunctions(
     //active scan on
     FTS521_SCAN_MODE[1] = 0x00;
     FTS521_SCAN_MODE[2] = 0x01;
-    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
-    //SpbDeviceWrite(SpbContext, FTS521_GESTURE, 3);
+    //FtsWrite(SpbContext, FTS521_GESTURE, 3);
 
     //low power scan off
     FTS521_SCAN_MODE[1] = 0x00;
     FTS521_SCAN_MODE[2] = 0x00;
-    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
     //active scan on
     FTS521_SCAN_MODE[1] = 0x00;
     FTS521_SCAN_MODE[2] = 0x01;
-    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
     return STATUS_SUCCESS;
 }
@@ -141,7 +141,7 @@ Return Value:
     int base = 0;
     int i = 0;
 
-    status = FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
+    status = FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
 
     if (!NT_SUCCESS(status))
     {
@@ -156,7 +156,7 @@ Return Value:
 
     if (remain > 0)
     {
-        FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
+        FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
     }
 
     for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {

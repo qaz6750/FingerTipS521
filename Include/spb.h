@@ -67,7 +67,7 @@ SpbWriteDataSynchronously(
     );
 
 NTSTATUS
-FtsWriteReadData(
+FtsWriteReadU8UX(
     IN SPB_CONTEXT *SpbContext,
     IN PVOID pInputBuffer,
     IN PVOID pOutputBuffer,
@@ -76,7 +76,7 @@ FtsWriteReadData(
 );
 
 NTSTATUS
-SpbDeviceWrite(
+FtsWrite(
     IN SPB_CONTEXT* SpbContext,
     IN PVOID Data,
     IN ULONG Length

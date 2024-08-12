@@ -23,13 +23,7 @@
 #include <fts521\ftsinternal.h>
 #include <ftsinternal.tmh>
 
-BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
-BYTE FTS521_READ_ONE_EVENTS[1] = { 0x85 };
 BYTE FTS521_READ_EVENTS[1] = { 0x86 };
-
-BYTE FTS521_GESTURE[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
-BYTE FTS521_ONLY_SINGLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
-BYTE FTS521_SINGLE_DOUBLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
 
 BYTE eventbuf[256];
 
@@ -69,6 +63,7 @@ Fts521ConfigureFunctions(
     FTS521_CONTROLLER_CONTEXT* controller;
     controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
+    BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
     status = FtsWrite(SpbContext, FTS521_LOCKDOWN, 3);
     if (NT_SUCCESS(status))
     {
@@ -109,20 +104,18 @@ Return Value:
 
 --*/
 {
-    NTSTATUS status;
+    NTSTATUS              status;
     BYTE                  touchType;
     BYTE                  touchId;
+    int                   remain = 0;
+    int                   x = 0;
+    int                   y = 0;
+    int                   base = 0;
 
     FTS521_CONTROLLER_CONTEXT* controller;
 
     PFOCAL_TECH_EVENT_DATA controllerData = NULL;
     controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
-
-    int remain = 0;
-    int x = 0;
-    int y = 0;
-    int base = 0;
-    int i = 0;
 
     status = FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
 
@@ -143,7 +136,7 @@ Return Value:
         FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 10);
     }
 
-    for (i = 0; i < remain+1 ; i++)
+    for (int i = 0; i < remain+1 ; i++)
     {
         base = i * 8;
         touchType = eventbuf[base + 1] & 0x0F;

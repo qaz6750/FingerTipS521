@@ -260,7 +260,7 @@ TchReadReport(
 		FEATURE, 0x02, \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1 \
+#define FINGERTIPS_FTS521_DIGITIZER_STYLUS_CONTACT_1 \
 	BEGIN_COLLECTION, 0x00, /* Collection (Physical) */ \
 		USAGE, 0x42, /* Usage (Tip Switch) */ \
 		LOGICAL_MINIMUM, 0x00, /* Logical Minimum (0) */ \
@@ -311,13 +311,13 @@ TchReadReport(
 		UNIT, 0x00, /* Unit: None */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_STYLUS \
+#define FINGERTIPS_FTS521_DIGITIZER_STYLUS \
 	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
 	USAGE, 0x02, /* Usage (Pen) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
 		REPORT_ID, REPORTID_STYLUS, /* Report ID (11) */ \
 		USAGE, 0x20, /* Usage (Stylus) */ \
-		FOCALTECH_FT5X_DIGITIZER_STYLUS_CONTACT_1, /* Stylus (1) */ \
+		FINGERTIPS_FTS521_DIGITIZER_STYLUS_CONTACT_1, /* Stylus (1) */ \
 		USAGE_PAGE_1, 0x00, 0xff, \
 		REPORT_ID, REPORTID_PENHQA, \
 		USAGE, 0xc5, \
@@ -328,7 +328,7 @@ TchReadReport(
 		FEATURE, 0x02, \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC1 \
+#define FINGERTIPS_FTS521_DIGITIZER_DIAGNOSTIC1 \
 	USAGE_PAGE_1, 0x05, 0xFF, /* Usage Page (Vendor Defined 0xFF05) */ \
 	USAGE, 0x01, /* Usage (0x01) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
@@ -348,7 +348,7 @@ TchReadReport(
 		FEATURE, 0x02, /* Feature: (Data, Var, Abs) */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC2 \
+#define FINGERTIPS_FTS521_DIGITIZER_DIAGNOSTIC2 \
 	USAGE_PAGE_1, 0x05, 0xFF, /* Usage Page (Vendor Defined 0xFF05) */ \
 	USAGE, 0x02, /* Usage (0x02) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
@@ -364,7 +364,7 @@ TchReadReport(
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC3 \
+#define FINGERTIPS_FTS521_DIGITIZER_DIAGNOSTIC3 \
 	USAGE_PAGE_1, 0x05, 0xFF, /* Usage Page (Vendor Defined 0xFF05) */ \
 	USAGE, 0x03, /* Usage (0x03) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
@@ -380,7 +380,7 @@ TchReadReport(
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC4 \
+#define FINGERTIPS_FTS521_DIGITIZER_DIAGNOSTIC4 \
 	USAGE_PAGE_1, 0x05, 0xFF, /* Usage Page (Vendor Defined 0xFF05) */ \
 	USAGE, 0x04, /* Usage (0x04) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
@@ -401,7 +401,7 @@ TchReadReport(
 	END_COLLECTION /* End Collection */
 
 
-#define FOCALTECH_FT5X_DIGITIZER_REPORTMODE \
+#define FINGERTIPS_FTS521_DIGITIZER_REPORTMODE \
 	USAGE_PAGE, 0x0D, /* Usage Page (Digitizer) */ \
 	USAGE, 0x0E, /* Usage (Configuration) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \
@@ -423,7 +423,7 @@ TchReadReport(
 		END_COLLECTION, /* End Collection */ \
 	END_COLLECTION /* End Collection */
 
-#define FOCALTECH_FT5X_DIGITIZER_KEYPAD \
+#define FINGERTIPS_FTS521_DIGITIZER_KEYPAD \
 	USAGE_PAGE, 0x01, /* Usage Page (Generic Desktop Ctrls) */ \
 	USAGE, 0x0D, /* Usage (Portable Device Control) */ \
 	BEGIN_COLLECTION, 0x01, /* Collection (Application) */ \

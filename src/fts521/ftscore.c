@@ -30,13 +30,18 @@ SetScanMode(
     BYTE FTS521_SCAN_MODE[3] = { FTS_CMD_SCAN_MODE, Mode, Settings };
 
     status = FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
-    if (NT_SUCCESS(status))
+    if (!NT_SUCCESS(status))
     {
         Trace(
             TRACE_LEVEL_ERROR,
             TRACE_INTERRUPT,
-            "Setting scan mode Error.");
+            "Setting scan mode Error");
     }
+
+    Trace(
+            TRACE_LEVEL_INFORMATION,
+            TRACE_INTERRUPT,
+            "Setting scan mode OK");
 
     return STATUS_SUCCESS;
 }

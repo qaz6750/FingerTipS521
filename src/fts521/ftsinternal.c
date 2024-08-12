@@ -65,12 +65,12 @@ Fts521ConfigureFunctions(
 
     BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
     status = FtsWrite(SpbContext, FTS521_LOCKDOWN, 3);
-    if (NT_SUCCESS(status))
+    if (!NT_SUCCESS(status))
     {
         Trace(
             TRACE_LEVEL_ERROR,
             TRACE_INTERRUPT,
-            "Writing Lockdown code into the IC done.");
+            "Writing Lockdown code into the IC done");
     }
 
     SetScanMode(controller->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x01);

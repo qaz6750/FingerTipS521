@@ -83,25 +83,11 @@ Fts521ConfigureFunctions(
     FTS521_SCAN_MODE[2] = 0x01;
     FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
 
-    //FtsWrite(SpbContext, FTS521_GESTURE, 3);
-
-    //low power scan off
-    FTS521_SCAN_MODE[1] = 0x00;
-    FTS521_SCAN_MODE[2] = 0x00;
-    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
-
-    //active scan on
-    FTS521_SCAN_MODE[1] = 0x00;
-    FTS521_SCAN_MODE[2] = 0x01;
-    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
-
     return STATUS_SUCCESS;
 }
 
-#define TOUCH_MAX_FINGER_NUM 10
-
 NTSTATUS
-Fts521GetObjectStatusFromControllerF12(
+Fts521GetObjectStatusFromController(
     IN VOID* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
     IN DETECTED_OBJECTS* Data
@@ -154,12 +140,13 @@ Return Value:
         goto exit;
     }
 
+    remain = eventbuf[7];
     if (remain > 0)
     {
-        FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 2);
+        FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 10);
     }
 
-    for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {
+    for (i = 0; i < remain+1 ; i++) {
 
         base = i * 8;
         touchType = eventbuf[base + 1] & 0x0F;
@@ -168,28 +155,36 @@ Return Value:
         x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
         y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
 
-            switch (eventbuf[i * 8 + 0])
-            {
+        if (eventbuf[i * 8 + 0] == EVT_ID_NOEVENT)
+        {
+            break;
+        }
+
+        switch (eventbuf[i * 8 + 0])
+        {
             case EVT_ID_ENTER_POINT:
             case EVT_ID_MOTION_POINT:
-                Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+                Data->States[touchId] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
                 break;
             case EVT_ID_LEAVE_POINT:
-                Data->States[i] = OBJECT_STATE_NOT_PRESENT;
+                Data->States[touchId] = OBJECT_STATE_NOT_PRESENT;
                 break;
-            }
+        }
         
-
-        Data->Positions[i].X = x;
-        Data->Positions[i].Y = y;
-
+        Data->Positions[touchId].X = x;
+        Data->Positions[touchId].Y = y;
+        /*
           Trace(
               TRACE_LEVEL_ERROR,
               TRACE_INTERRUPT,
               "TOUCH event: 0x%02x - ID[%d], x: %d, y:%d",
               eventbuf[i * 8 + 0], touchId, x, y);
-      }
       
+        
+          DbgPrint("FTS521: Event: 0x%02x - ID[%d], (x, y) = (%3d, %3d) type = %d \n",
+              eventbuf[i * 8 + 0], touchId, x, y, touchType);
+        */
+    }
   exit:
       return status;
 
@@ -211,7 +206,7 @@ TchServiceObjectInterrupts(
       // See if new touch data is available
       //
 
-      status = Fts521GetObjectStatusFromControllerF12(
+      status = Fts521GetObjectStatusFromController(
             ControllerContext,
             SpbContext,
             &data

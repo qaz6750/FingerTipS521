@@ -67,10 +67,10 @@ Fts521ConfigureFunctions(
     status = FtsWrite(SpbContext, FTS521_LOCKDOWN, 3);
     if (!NT_SUCCESS(status))
     {
-        Trace(
-            TRACE_LEVEL_ERROR,
-            TRACE_INTERRUPT,
-            "Writing Lockdown code into the IC done");
+      Trace(
+          TRACE_LEVEL_ERROR,
+          TRACE_INTERRUPT,
+          "Writing Lockdown code into the IC done");
     }
 
     SetScanMode(controller->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x01);
@@ -121,59 +121,48 @@ Return Value:
 
     if (!NT_SUCCESS(status))
     {
-        Trace(
-            TRACE_LEVEL_ERROR,
-            TRACE_INTERRUPT,
-            "Error reading finger status data - 0x%08lX",
-            status);
+      Trace(
+          TRACE_LEVEL_ERROR,
+          TRACE_INTERRUPT,
+          "Error reading finger status data - 0x%08lX",
+          status);
 
-        goto exit;
+      goto exit;
     }
 
     remain = eventbuf[7];
     if (remain > 0)
     {
-        FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 10);
+      FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 10);
     }
 
     for (int i = 0; i < remain+1 ; i++)
     {
-        base = i * 8;
-        touchType = eventbuf[base + 1] & 0x0F;
-        touchId = (eventbuf[base + 1] & 0xF0) >> 4;
+      base = i * 8;
+      touchType = eventbuf[base + 1] & 0x0F;
+      touchId = (eventbuf[base + 1] & 0xF0) >> 4;
 
-        x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
-        y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
+      x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
+      y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
 
-        if (eventbuf[i * 8 + 0] == EVT_ID_NOEVENT)
-        {
-            break;
-        }
+      if (eventbuf[i * 8 + 0] == EVT_ID_NOEVENT)
+      {
+          break;
+      }
 
-        switch (eventbuf[i * 8 + 0])
-        {
+      switch (eventbuf[i * 8 + 0])
+      {
             case EVT_ID_ENTER_POINT:
             case EVT_ID_MOTION_POINT:
-                Data->States[touchId] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
-                break;
+              Data->States[touchId] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+               break;
             case EVT_ID_LEAVE_POINT:
                 Data->States[touchId] = OBJECT_STATE_NOT_PRESENT;
                 break;
-        }
+      }
         
-        Data->Positions[touchId].X = x;
-        Data->Positions[touchId].Y = y;
-        /*
-          Trace(
-              TRACE_LEVEL_ERROR,
-              TRACE_INTERRUPT,
-              "TOUCH event: 0x%02x - ID[%d], x: %d, y:%d",
-              eventbuf[i * 8 + 0], touchId, x, y);
-      
-        
-          DbgPrint("FTS521: Event: 0x%02x - ID[%d], (x, y) = (%3d, %3d) type = %d \n",
-              eventbuf[i * 8 + 0], touchId, x, y, touchType);
-        */
+      Data->Positions[touchId].X = x;
+      Data->Positions[touchId].Y = y;
     }
 exit:
       return status;

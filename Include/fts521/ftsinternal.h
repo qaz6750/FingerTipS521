@@ -4,7 +4,7 @@
 
 	Module Name:
 
-		ftinternal.h
+		ftsinternal.h
 
 	Abstract:
 
@@ -29,6 +29,33 @@
 #include <Cross Platform Shim/hweight.h>
 #include <report.h>
 
+/*No Events*/
+#define EVT_ID_NOEVENT						0x00
+/*Controller ready, issued after a system reset.*/
+#define EVT_ID_CONTROLLER_READY				0x03
+/*Touch enter in the sensing area*/
+#define EVT_ID_ENTER_POINT					0x13
+/*Touch motion (a specific touch changed position)*/
+#define EVT_ID_MOTION_POINT					0x23
+/*Touch leave the sensing area*/
+#define EVT_ID_LEAVE_POINT					0x33
+/*FW report a system condition change*/
+#define EVT_ID_STATUS_UPDATE				0x43
+/*User related events triggered (keys, gestures, proximity etc)*/
+#define EVT_ID_USER_REPORT					0x53
+/*Debug Info*/
+#define EVT_ID_DEBUG						0xE3
+/*Error Event*/
+#define EVT_ID_ERROR						0xF3
+
+/*OP Code to set scan mode*/
+#define FTS_CMD_SCAN_MODE					0xA0
+
+/*Select the Active scanning mode*/
+#define SCAN_MODE_ACTIVE					0x00
+/*Select the low power scanning mode*/
+#define SCAN_MODE_LOW_POWER					0x01
+
 // Ignore warning C4152: nonstandard extension, function/data pointer conversion in expression
 #pragma warning (disable : 4152)
 
@@ -40,16 +67,6 @@
 
 // Ignore warning C4324: 'xxx' : structure was padded due to __declspec(align())
 #pragma warning (disable : 4324)
-
-#define EVT_ID_NOEVENT						0x00	/*No Events*/
-#define EVT_ID_CONTROLLER_READY				0x03	/*Controller ready, issued after a system reset.*/
-#define EVT_ID_ENTER_POINT					0x13	/*Touch enter in the sensing area*/
-#define EVT_ID_MOTION_POINT					0x23	/*Touch motion (a specific touch changed position)*/
-#define EVT_ID_LEAVE_POINT					0x33	/*Touch leave the sensing area*/
-#define EVT_ID_STATUS_UPDATE				0x43	/*FW report a system condition change*/
-#define EVT_ID_USER_REPORT					0x53	/*User related events triggered (keys, gestures, proximity etc)*/
-#define EVT_ID_DEBUG						0xE3	/*Debug Info*/
-#define EVT_ID_ERROR						0xF3	/*Error Event*/
 
 typedef struct _FOCAL_TECH_TOUCH_DATA
 {
@@ -245,12 +262,6 @@ Fts521ChangeSleepState(
 );
 
 NTSTATUS
-Ft5xGetFirmwareVersion(
-    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
-    IN SPB_CONTEXT* SpbContext
-);
-
-NTSTATUS
 Fts521CheckInterrupts(
     IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
     IN SPB_CONTEXT* SpbContext,
@@ -263,3 +274,10 @@ Fts521ConfigureInterruptEnable(
     IN SPB_CONTEXT* SpbContext
 );
 
+NTSTATUS
+SetScanMode(
+	WDFDEVICE Device,
+	SPB_CONTEXT* SpbContext,
+	BYTE Mode,
+	BYTE Settings
+);

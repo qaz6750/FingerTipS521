@@ -421,6 +421,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Cross Platform Shim\bitops.c" />
     <ClCompile Include="..\src\Cross Platform Shim\hweight.c" />
+    <ClCompile Include="..\src\fts521\ftscore.c" />
     <ClCompile Include="..\src\fts521\ftsinternal.c" />
     <ClCompile Include="..\src\idle.c" />
     <ClCompile Include="..\src\report.c" />

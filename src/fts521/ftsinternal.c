@@ -4,11 +4,11 @@
 
       Module Name:
 
-            rmiinternal.c
+            ftsinternal.c
 
       Abstract:
 
-            Contains Synaptics initialization code
+            Contains FingerTipS521 initialization code
 
       Environment:
 
@@ -26,7 +26,7 @@
 BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
 BYTE FTS521_READ_ONE_EVENTS[1] = { 0x85 };
 BYTE FTS521_READ_EVENTS[1] = { 0x86 };
-BYTE FTS521_SCAN_MODE[3] = { 0xA0, 0x00, 0x00 };
+
 BYTE FTS521_GESTURE[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
 BYTE FTS521_ONLY_SINGLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
 BYTE FTS521_SINGLE_DOUBLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
@@ -75,13 +75,10 @@ Fts521ConfigureFunctions(
         Trace(
             TRACE_LEVEL_ERROR,
             TRACE_INTERRUPT,
-            "Writing Lockdown code into the IC done ");
+            "Writing Lockdown code into the IC done.");
     }
 
-    //active scan on
-    FTS521_SCAN_MODE[1] = 0x00;
-    FTS521_SCAN_MODE[2] = 0x01;
-    FtsWrite(SpbContext, FTS521_SCAN_MODE, 3);
+    SetScanMode(controller->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x01);
 
     return STATUS_SUCCESS;
 }
@@ -146,8 +143,8 @@ Return Value:
         FtsWriteReadU8UX(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 10);
     }
 
-    for (i = 0; i < remain+1 ; i++) {
-
+    for (i = 0; i < remain+1 ; i++)
+    {
         base = i * 8;
         touchType = eventbuf[base + 1] & 0x0F;
         touchId = (eventbuf[base + 1] & 0xF0) >> 4;
@@ -185,7 +182,7 @@ Return Value:
               eventbuf[i * 8 + 0], touchId, x, y, touchType);
         */
     }
-  exit:
+exit:
       return status;
 
 }

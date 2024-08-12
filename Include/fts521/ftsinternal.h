@@ -1,21 +1,21 @@
 /*++
-	Copyright (c) Microsoft Corporation. All Rights Reserved.
-	Sample code. Dealpoint ID #843729.
+    Copyright (c) Microsoft Corporation. All Rights Reserved.
+    Sample code. Dealpoint ID #843729.
 
-	Module Name:
+    Module Name:
 
-		ftsinternal.h
+        ftsinternal.h
 
-	Abstract:
+    Abstract:
 
-		Contains common types and defintions used internally
-		by the multi touch screen driver.
+        Contains common types and defintions used internally
+        by the multi touch screen driver.
 
-	Environment:
+    Environment:
 
-		Kernel mode
+        Kernel mode
 
-	Revision History:
+    Revision History:
 
 --*/
 
@@ -30,31 +30,31 @@
 #include <report.h>
 
 /*No Events*/
-#define EVT_ID_NOEVENT						0x00
+#define EVT_ID_NOEVENT                        0x00
 /*Controller ready, issued after a system reset.*/
-#define EVT_ID_CONTROLLER_READY				0x03
+#define EVT_ID_CONTROLLER_READY               0x03
 /*Touch enter in the sensing area*/
-#define EVT_ID_ENTER_POINT					0x13
+#define EVT_ID_ENTER_POINT                    0x13
 /*Touch motion (a specific touch changed position)*/
-#define EVT_ID_MOTION_POINT					0x23
+#define EVT_ID_MOTION_POINT                   0x23
 /*Touch leave the sensing area*/
-#define EVT_ID_LEAVE_POINT					0x33
+#define EVT_ID_LEAVE_POINT                    0x33
 /*FW report a system condition change*/
-#define EVT_ID_STATUS_UPDATE				0x43
+#define EVT_ID_STATUS_UPDATE                  0x43
 /*User related events triggered (keys, gestures, proximity etc)*/
-#define EVT_ID_USER_REPORT					0x53
+#define EVT_ID_USER_REPORT                    0x53
 /*Debug Info*/
-#define EVT_ID_DEBUG						0xE3
+#define EVT_ID_DEBUG                          0xE3
 /*Error Event*/
-#define EVT_ID_ERROR						0xF3
+#define EVT_ID_ERROR                          0xF3
 
 /*OP Code to set scan mode*/
-#define FTS_CMD_SCAN_MODE					0xA0
+#define FTS_CMD_SCAN_MODE                     0xA0
 
 /*Select the Active scanning mode*/
-#define SCAN_MODE_ACTIVE					0x00
+#define SCAN_MODE_ACTIVE                      0x00
 /*Select the low power scanning mode*/
-#define SCAN_MODE_LOW_POWER					0x01
+#define SCAN_MODE_LOW_POWER                   0x01
 
 // Ignore warning C4152: nonstandard extension, function/data pointer conversion in expression
 #pragma warning (disable : 4152)
@@ -70,35 +70,35 @@
 
 typedef struct _FOCAL_TECH_TOUCH_DATA
 {
-	BYTE PositionX_High : 4;
-	BYTE Reserved0 : 2;
-	BYTE EventFlag : 2;
+    BYTE PositionX_High : 4;
+    BYTE Reserved0 : 2;
+    BYTE EventFlag : 2;
 
-	BYTE PositionX_Low;
+    BYTE PositionX_Low;
 
-	BYTE PositionY_High : 4;
-	BYTE TouchId : 4;
+    BYTE PositionY_High : 4;
+    BYTE TouchId : 4;
 
-	BYTE PositionY_Low;
+    BYTE PositionY_Low;
 
-	BYTE TouchWeight;
+    BYTE TouchWeight;
 
-	BYTE Reserved1 : 4;
-	BYTE TouchArea : 4;
+    BYTE Reserved1 : 4;
+    BYTE TouchArea : 4;
 } FOCAL_TECH_TOUCH_DATA, * PFOCAL_TECH_TOUCH_DATA;
 
 typedef struct _FOCAL_TECH_EVENT_DATA
 {
-	BYTE Reserved0 : 4;
-	BYTE DeviceMode : 3;
-	BYTE Reserved1 : 1;
+    BYTE Reserved0 : 4;
+    BYTE DeviceMode : 3;
+    BYTE Reserved1 : 1;
 
-	BYTE GestureId;
+    BYTE GestureId;
 
-	BYTE NumberOfTouchPoints : 4;
-	BYTE Reserved2 : 4;
+    BYTE NumberOfTouchPoints : 4;
+    BYTE Reserved2 : 4;
 
-	FOCAL_TECH_TOUCH_DATA TouchData[6];
+    FOCAL_TECH_TOUCH_DATA TouchData[6];
 } FOCAL_TECH_EVENT_DATA, * PFOCAL_TECH_EVENT_DATA;
 
 #define TOUCH_POOL_TAG_F12              (ULONG)'21oT'
@@ -108,14 +108,14 @@ typedef struct _FOCAL_TECH_EVENT_DATA
 //
 typedef struct _RM4_F01_CTRL_REGISTERS_LOGICAL
 {
-	UINT32 SleepMode;
-	UINT32 NoSleep;
-	UINT32 ReportRate;
-	UINT32 Configured;
-	UINT32 InterruptEnable;
-	UINT32 DozeInterval;
-	UINT32 DozeThreshold;
-	UINT32 DozeHoldoff;
+    UINT32 SleepMode;
+    UINT32 NoSleep;
+    UINT32 ReportRate;
+    UINT32 Configured;
+    UINT32 InterruptEnable;
+    UINT32 DozeInterval;
+    UINT32 DozeThreshold;
+    UINT32 DozeHoldoff;
 } FTS521_F01_CTRL_REGISTERS_LOGICAL;
 
 #define FTS521_MILLISECONDS_TO_TENTH_MILLISECONDS(n) n/10
@@ -126,43 +126,43 @@ typedef struct _RM4_F01_CTRL_REGISTERS_LOGICAL
 //
 typedef struct _FTS521_F11_CTRL_REGISTERS_LOGICAL
 {
-	UINT32 ReportingMode;
-	UINT32 AbsPosFilt;
-	UINT32 RelPosFilt;
-	UINT32 RelBallistics;
-	UINT32 Dribble;
-	UINT32 PalmDetectThreshold;
-	UINT32 MotionSensitivity;
-	UINT32 ManTrackEn;
-	UINT32 ManTrackedFinger;
-	UINT32 DeltaXPosThreshold;
-	UINT32 DeltaYPosThreshold;
-	UINT32 Velocity;
-	UINT32 Acceleration;
-	UINT32 SensorMaxXPos;
-	UINT32 SensorMaxYPos;
-	UINT32 ZTouchThreshold;
-	UINT32 ZHysteresis;
-	UINT32 SmallZThreshold;
-	UINT32 SmallZScaleFactor;
-	UINT32 LargeZScaleFactor;
-	UINT32 AlgorithmSelection;
-	UINT32 WxScaleFactor;
-	UINT32 WxOffset;
-	UINT32 WyScaleFactor;
-	UINT32 WyOffset;
-	UINT32 XPitch;
-	UINT32 YPitch;
-	UINT32 FingerWidthX;
-	UINT32 FingerWidthY;
-	UINT32 ReportMeasuredSize;
-	UINT32 SegmentationSensitivity;
-	UINT32 XClipLo;
-	UINT32 XClipHi;
-	UINT32 YClipLo;
-	UINT32 YClipHi;
-	UINT32 MinFingerSeparation;
-	UINT32 MaxFingerMovement;
+    UINT32 ReportingMode;
+    UINT32 AbsPosFilt;
+    UINT32 RelPosFilt;
+    UINT32 RelBallistics;
+    UINT32 Dribble;
+    UINT32 PalmDetectThreshold;
+    UINT32 MotionSensitivity;
+    UINT32 ManTrackEn;
+    UINT32 ManTrackedFinger;
+    UINT32 DeltaXPosThreshold;
+    UINT32 DeltaYPosThreshold;
+    UINT32 Velocity;
+    UINT32 Acceleration;
+    UINT32 SensorMaxXPos;
+    UINT32 SensorMaxYPos;
+    UINT32 ZTouchThreshold;
+    UINT32 ZHysteresis;
+    UINT32 SmallZThreshold;
+    UINT32 SmallZScaleFactor;
+    UINT32 LargeZScaleFactor;
+    UINT32 AlgorithmSelection;
+    UINT32 WxScaleFactor;
+    UINT32 WxOffset;
+    UINT32 WyScaleFactor;
+    UINT32 WyOffset;
+    UINT32 XPitch;
+    UINT32 YPitch;
+    UINT32 FingerWidthX;
+    UINT32 FingerWidthY;
+    UINT32 ReportMeasuredSize;
+    UINT32 SegmentationSensitivity;
+    UINT32 XClipLo;
+    UINT32 XClipHi;
+    UINT32 YClipLo;
+    UINT32 YClipHi;
+    UINT32 MinFingerSeparation;
+    UINT32 MaxFingerMovement;
 } FTS521_F11_CTRL_REGISTERS_LOGICAL;
 
 //
@@ -171,56 +171,56 @@ typedef struct _FTS521_F11_CTRL_REGISTERS_LOGICAL
 
 typedef struct _FTS521_CONFIGURATION
 {
-	FTS521_F01_CTRL_REGISTERS_LOGICAL DeviceSettings;
-	FTS521_F11_CTRL_REGISTERS_LOGICAL TouchSettings;
-	UINT32 PepRemovesVoltageInD3;
+    FTS521_F01_CTRL_REGISTERS_LOGICAL DeviceSettings;
+    FTS521_F11_CTRL_REGISTERS_LOGICAL TouchSettings;
+    UINT32 PepRemovesVoltageInD3;
 } FTS521_CONFIGURATION;
 
 
 typedef struct _FTS521_CONTROLLER_CONTEXT
 {
-	WDFDEVICE FxDevice;
-	WDFWAITLOCK ControllerLock;
+    WDFDEVICE FxDevice;
+    WDFWAITLOCK ControllerLock;
 
-	//
-	// Power state
-	//
-	DEVICE_POWER_STATE DevicePowerState;
+    //
+    // Power state
+    //
+    DEVICE_POWER_STATE DevicePowerState;
 
-	//
-	// Register configuration programmed to chip
-	//
-	TOUCH_SCREEN_SETTINGS TouchSettings;
-	FTS521_CONFIGURATION Config;
+    //
+    // Register configuration programmed to chip
+    //
+    TOUCH_SCREEN_SETTINGS TouchSettings;
+    FTS521_CONFIGURATION Config;
 
-	BYTE MaxFingers;
+    BYTE MaxFingers;
 
 } FTS521_CONTROLLER_CONTEXT;
 
 NTSTATUS
 Fts521BuildFunctionsTable(
-	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
-	IN SPB_CONTEXT* SpbContext
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
+    IN SPB_CONTEXT* SpbContext
 );
 
 NTSTATUS
 Fts521ChangePage(
-	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
-	IN SPB_CONTEXT* SpbContext,
-	IN int DesiredPage
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
+    IN SPB_CONTEXT* SpbContext,
+    IN int DesiredPage
 );
 
 NTSTATUS
 Fts521ConfigureFunctions(
-	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
-	IN SPB_CONTEXT* SpbContext
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
+    IN SPB_CONTEXT* SpbContext
 );
 
 NTSTATUS
 Fts521ServiceInterrupts(
-	IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
-	IN SPB_CONTEXT* SpbContext,
-	IN PREPORT_CONTEXT ReportContext
+    IN FTS521_CONTROLLER_CONTEXT* ControllerContext,
+    IN SPB_CONTEXT* SpbContext,
+    IN PREPORT_CONTEXT ReportContext
 );
 
 #define FTS521_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING  0
@@ -264,8 +264,8 @@ Fts521ConfigureInterruptEnable(
 
 NTSTATUS
 SetScanMode(
-	WDFDEVICE Device,
-	SPB_CONTEXT* SpbContext,
-	BYTE Mode,
-	BYTE Settings
+    WDFDEVICE Device,
+    SPB_CONTEXT* SpbContext,
+    BYTE Mode,
+    BYTE Settings
 );

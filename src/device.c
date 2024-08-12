@@ -23,7 +23,7 @@
 #include <controller.h>
 #include <device.h>
 #include <spb.h>
-//#include <FingerTipS521-TouchDriverETW.h>
+//#include <FingerTipS521DriverETW.h>
 #include <idle.h>
 #include <hid.h>
 #include <gpio.h>

@@ -172,20 +172,8 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "The Display is Off");
 
-            
-            /*
-            status = PowerToggle(&devContext->TouchPowerContext, 0);
+            SetScanMode(ControllerContext->FxDevice, SpbContext, SCAN_MODE_LOW_POWER, 0x00);
 
-            if (!NT_SUCCESS(status))
-            {
-                Trace(
-                    TRACE_LEVEL_ERROR,
-                    TRACE_POWER,
-                    "Error changing touch power state - 0x%08lX",
-                    status);
-                goto exit;
-            }
-            */
             break;
         case 1:
             Trace(
@@ -193,19 +181,8 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "The Display is On");
 
-            /*
-            status = PowerToggle(&devContext->TouchPowerContext, 1);
+            SetScanMode(ControllerContext->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x01);
 
-            if (!NT_SUCCESS(status))
-            {
-                Trace(
-                    TRACE_LEVEL_ERROR,
-                    TRACE_POWER,
-                    "Error changing touch power state - 0x%08lX",
-                    status);
-                goto exit;
-            }
-            */
             break;
         case 2:
             Trace(

@@ -97,7 +97,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="..\src\FingerTipS521-Touch.inf">
+    <Inf Include="..\src\FingerTipS521.inf">
       <Filter>Driver Files</Filter>
     </Inf>
     <Inf Include="..\src\FingerTipS521-FodReport.inf">

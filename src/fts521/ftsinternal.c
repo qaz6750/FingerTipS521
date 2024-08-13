@@ -60,6 +60,8 @@ Fts521ConfigureFunctions(
 )
 {
     NTSTATUS status;
+    LARGE_INTEGER delay;
+
     FTS521_CONTROLLER_CONTEXT* controller;
     controller = (FTS521_CONTROLLER_CONTEXT*)ControllerContext;
 
@@ -73,6 +75,13 @@ Fts521ConfigureFunctions(
           "Writing Lockdown code into the IC done");
     }
 
+    //Active Scan OFF
+    SetScanMode(controller->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x00);
+
+    delay.QuadPart = RELATIVE(MILLISECONDS(50));
+    KeDelayExecutionThread(KernelMode, TRUE, &delay);
+
+    //Active Scan ON
     SetScanMode(controller->FxDevice, SpbContext, SCAN_MODE_ACTIVE, 0x01);
 
     return STATUS_SUCCESS;

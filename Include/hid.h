@@ -203,7 +203,6 @@ TchReadReport(
 		USAGE, 0x31, /* Usage (Y) */ \
 		LOGICAL_MAXIMUM_2, Y_MASK, /* Logical Maximum (2560) */ \
 		INPUT, 0x02, /* Input: (Data, Var, Abs) */ \
-		PHYSICAL_MAXIMUM, 0x00, /* Physical Maximum: 0 */ \
 	END_COLLECTION /* End Collection */
 
 #define FINGERTIPS_FTS521_FINGER_CONTACT_2 \

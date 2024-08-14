@@ -51,7 +51,7 @@ OnInterruptIsr(
     processing.
 
     This is a PASSIVE_LEVEL ISR. ACPI should specify
-    level-triggered interrupts when using FocalTech 3202.
+    level-triggered interrupts when using FingerTipS 521.
 
   Arguments:
 
@@ -160,7 +160,7 @@ Return Value:
     }
 
     //
-    // N.B. This FT5X chip's IRQ is level-triggered, but cannot be enabled in
+    // N.B. This FTS521 chip's IRQ is level-triggered, but cannot be enabled in
     //      ACPI until passive-level interrupt handling is added to the driver.
     //      Service chip in case we missed an edge during D3 or boot-up.
     //
@@ -386,29 +386,29 @@ OnPrepareHardware(
             goto exit;
         }
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Starting bring up sequence for the controller");
+        // Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Starting bring up sequence for the controller");
 
-        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to low");
+        // Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to low");
 
-        //value = 0;
-        //SetGPIO(devContext->ResetGpio, &value);
-
-        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
-
-        delay.QuadPart = -10 * TOUCH_POWER_RAIL_STABLE_TIME;
-        KeDelayExecutionThread(KernelMode, TRUE, &delay);
-
-        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to high");
-
-        //value = 1;
-        //SetGPIO(devContext->ResetGpio, &value);
+        // value = 0;
+        // SetGPIO(devContext->ResetGpio, &value);
 
         //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
 
-        //delay.QuadPart = -10 * TOUCH_DELAY_TO_COMMUNICATE;
-        //KeDelayExecutionThread(KernelMode, TRUE, &delay);
+        // delay.QuadPart = -10 * TOUCH_POWER_RAIL_STABLE_TIME;
+        // KeDelayExecutionThread(KernelMode, TRUE, &delay);
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Done");
+        // Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to high");
+
+        // value = 1;
+        // SetGPIO(devContext->ResetGpio, &value);
+
+        // Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
+
+        // delay.QuadPart = -10 * TOUCH_DELAY_TO_COMMUNICATE;
+        // KeDelayExecutionThread(KernelMode, TRUE, &delay);
+
+        // Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Done");
     }
 
     //

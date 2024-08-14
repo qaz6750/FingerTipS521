@@ -9,7 +9,7 @@
 
 	Abstract:
 
-		Contains FocalTech initialization code
+		Contains FingerTipS initialization code
 
 	Environment:
 
@@ -58,7 +58,7 @@ TchStartDevice(
 	status = STATUS_SUCCESS;
 
 	//
-	// Populate context with FT5X function descriptors
+	// Populate context with FTS521 function descriptors
 	//
 	status = Fts521BuildFunctionsTable(
 		ControllerContext,
@@ -69,13 +69,13 @@ TchStartDevice(
 		Trace(
 			TRACE_LEVEL_ERROR,
 			TRACE_INIT,
-			"Could not build table of FT5X functions - 0x%08lX",
+			"Could not build table of FTS521 functions - 0x%08lX",
 			status);
 		goto exit;
 	}
 
 	//
-	// Initialize FT5X function control registers
+	// Initialize FTS521 function control registers
 	//
 	status = Fts521ConfigureFunctions(
 		ControllerContext,

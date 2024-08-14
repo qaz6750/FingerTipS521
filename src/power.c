@@ -9,7 +9,7 @@
 
     Abstract:
 
-        Contains FocalTech power-on and power-off functionality
+        Contains FingerTipS power-on and power-off functionality
 
     Environment:
 
@@ -271,7 +271,7 @@ Return Value:
     status = Fts521ChangeSleepState(
         controller,
         SpbContext,
-        FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING);
+        FTS521_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING);
 
     if (!NT_SUCCESS(status))
     {
@@ -329,7 +329,7 @@ Return Value:
     status = Fts521ChangeSleepState(
         ControllerContext,
         SpbContext,
-        FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_SLEEPING);
+        FTS521_F01_DEVICE_CONTROL_SLEEP_MODE_SLEEPING);
 
     if (!NT_SUCCESS(status))
     {

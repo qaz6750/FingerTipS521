@@ -75,9 +75,6 @@
     <ClCompile Include="..\src\Cross Platform Shim\hweight.c">
       <Filter>Source Files\Cross Platform Shim</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\selftest\enoselftest.c">
-      <Filter>Source Files\selftest</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\selftest\selftest.c">
       <Filter>Source Files\selftest</Filter>
     </ClCompile>
@@ -148,9 +145,6 @@
       <Filter>Header Files\Cross Platform Shim</Filter>
     </ClInclude>
     <ClInclude Include="..\include\selftest\selftest.h">
-      <Filter>Header Files\selftest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\selftest\enoselftest.h">
       <Filter>Header Files\selftest</Filter>
     </ClInclude>
     <ClInclude Include="..\include\touch_power\touch_power.h">

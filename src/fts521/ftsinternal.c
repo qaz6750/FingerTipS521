@@ -19,10 +19,18 @@
 --*/
 
 #include <Cross Platform Shim\compat.h>
-#include <spb.h>
 #include <report.h>
-#include <ft5x\ftinternal.h>
-#include <ftinternal.tmh>
+#include <fts521\ftsinternal.h>
+#include <ftsinternal.tmh>
+
+BYTE FTS521_LOCKDOWN[3] = { 0xA4, 0x06, 0x70 };
+BYTE FTS521_READ_EVENTS[3] = { 0x86, 0x00, 0x00 };
+BYTE FTS521_SCAN_MODE[3] = { 0xA0, 0x00, 0x00 };
+BYTE FTS521_GESTURE[6] = { 0xA2, 0x03, 0x20, 0x00, 0x00, 0x01 };
+BYTE FTS521_ONLY_SINGLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
+BYTE FTS521_SINGLE_DOUBLE[4] = { 0xC0, 0x02, 0x01, 0x1E };
+
+BYTE eventbuf[256];
 
 NTSTATUS
 Ft5xBuildFunctionsTable(
@@ -56,11 +64,46 @@ Ft5xConfigureFunctions(
       IN SPB_CONTEXT* SpbContext
 )
 {
-      UNREFERENCED_PARAMETER(SpbContext);
-      UNREFERENCED_PARAMETER(ControllerContext);
+    NTSTATUS status;
+    FT5X_CONTROLLER_CONTEXT* controller;
+    controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
 
-      return STATUS_SUCCESS;
+    status = SpbDeviceWrite(SpbContext, FTS521_LOCKDOWN, 3);
+    if (NT_SUCCESS(status))
+    {
+        Trace(
+            TRACE_LEVEL_ERROR,
+            TRACE_INTERRUPT,
+            "Writing Lockdown code into the IC done ");
+    }
+
+    //active scan off
+    FTS521_SCAN_MODE[1] = 0x00; //active scan
+    FTS521_SCAN_MODE[2] = 0x00; //off
+    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+
+    //low power scan off
+    FTS521_SCAN_MODE[1] = 0x01; //low power scan
+    FTS521_SCAN_MODE[2] = 0x00; //off
+    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+
+    //active scan on
+    FTS521_SCAN_MODE[1] = 0x00; //active scan
+    FTS521_SCAN_MODE[2] = 0x01; //on
+    SpbDeviceWrite(SpbContext, FTS521_SCAN_MODE, 3);
+
+    //FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, eventbuf, 3, 256);
+
+    return STATUS_SUCCESS;
 }
+
+struct fts521_abs_object {
+    unsigned short x;
+    unsigned short y;
+    unsigned short z;
+};
+
+#define TOUCH_MAX_FINGER_NUM 10
 
 NTSTATUS
 Ft5xGetObjectStatusFromControllerF12(
@@ -89,68 +132,75 @@ Return Value:
 --*/
 {
       NTSTATUS status;
+      BYTE                  touchType;
+      BYTE                  touchId;
+
       FT5X_CONTROLLER_CONTEXT* controller;
 
-      int i, x, y;
       PFOCAL_TECH_EVENT_DATA controllerData = NULL;
       controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+      
+      int remain = 0;
+      int x = 0;
+      int y = 0;
+      int distance = 0;
+      int base =0 ;
+      int temp = 0;
+      int i = 0;
+      unsigned char         area_size;
 
-      controllerData = ExAllocatePoolWithTag(
-            NonPagedPoolNx,
-            sizeof(FOCAL_TECH_EVENT_DATA),
-            TOUCH_POOL_TAG_F12);
 
-      if (controllerData == NULL)
-      {
-            status = STATUS_INSUFFICIENT_RESOURCES;
-            goto exit;
-      }
-
-      // 
-      // Packets we need is determined by context
-      //
-      status = SpbReadDataSynchronously(SpbContext, 0, controllerData, sizeof(FOCAL_TECH_EVENT_DATA));
+      status = FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[0], 3, 8);
 
       if (!NT_SUCCESS(status))
       {
-            Trace(
-                  TRACE_LEVEL_ERROR,
-                  TRACE_INTERRUPT,
-                  "Error reading finger status data - 0x%08lX",
-                  status);
+          Trace(
+              TRACE_LEVEL_ERROR,
+              TRACE_INTERRUPT,
+              "Error reading finger status data - 0x%08lX",
+              status);
 
-            goto free_buffer;
+          goto exit;
       }
 
-      BYTE X_MSB = 0;
-      BYTE X_LSB = 0;
-      BYTE Y_MSB = 0;
-      BYTE Y_LSB = 0;
-
-      for (i = 0; i < controllerData->NumberOfTouchPoints; i++)
+      remain = eventbuf[7];
+      if (remain > 0)
       {
-            X_MSB = controllerData->TouchData[i].PositionX_High;
-            X_LSB = controllerData->TouchData[i].PositionX_Low;
-            Y_MSB = controllerData->TouchData[i].PositionY_High;
-            Y_LSB = controllerData->TouchData[i].PositionY_Low;
-
-            Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
-
-            x = (X_MSB << 8) | X_LSB;
-            y = (Y_MSB << 8) | Y_LSB;
-
-            Data->Positions[i].X = x;
-            Data->Positions[i].Y = y;
+          FtsWriteReadData(SpbContext, FTS521_READ_EVENTS, &eventbuf[8], 3, 8 * remain);
       }
+      if (remain > 9)
+          remain = 9;
 
-free_buffer:
-      ExFreePoolWithTag(
-            controllerData,
-            TOUCH_POOL_TAG_F12
-      );
+      for (i = 0; i < TOUCH_MAX_FINGER_NUM; i++) {
 
-exit:
+          base = i * 8;
+          touchType = eventbuf[base + 1] & 0x0F;
+          touchId = (eventbuf[base + 1] & 0xF0) >> 4;
+
+          x = ((eventbuf[base + 3] & 0x0F) << 8) | (eventbuf[base + 2]);
+          y = (eventbuf[base + 4] << 4) | ((eventbuf[base + 3] & 0xF0) >> 4);
+
+          if (eventbuf[base + 0] == EVT_ID_MOTION_POINT) {
+              area_size = (eventbuf[base + 5] << 8) | eventbuf[base + 6];
+          }
+          else {
+              area_size = 1;
+          }
+          Data->States[i] = OBJECT_STATE_FINGER_PRESENT_WITH_ACCURATE_POS;
+
+          Data->Positions[i].X = x;
+          Data->Positions[i].Y = y;
+
+          Trace(
+              TRACE_LEVEL_ERROR,
+              TRACE_INTERRUPT,
+              "TOUCH event: 0x%02x - ID[%d], x: %d, y:%d",
+              eventbuf[i * 8 + 0], touchId, x, y);
+      }
+      
+  exit:
       return status;
+
 }
 
 NTSTATUS
@@ -168,6 +218,7 @@ TchServiceObjectInterrupts(
       //
       // See if new touch data is available
       //
+
       status = Ft5xGetObjectStatusFromControllerF12(
             ControllerContext,
             SpbContext,
@@ -259,18 +310,6 @@ Ft5xChangeSleepState(
       UNREFERENCED_PARAMETER(SpbContext);
       UNREFERENCED_PARAMETER(ControllerContext);
       UNREFERENCED_PARAMETER(SleepState);
-
-      return STATUS_SUCCESS;
-}
-
-NTSTATUS
-Ft5xGetFirmwareVersion(
-    IN FT5X_CONTROLLER_CONTEXT* ControllerContext,
-    IN SPB_CONTEXT* SpbContext
-)
-{
-      UNREFERENCED_PARAMETER(SpbContext);
-      UNREFERENCED_PARAMETER(ControllerContext);
 
       return STATUS_SUCCESS;
 }

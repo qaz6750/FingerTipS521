@@ -23,7 +23,7 @@
 
 #include <internal.h>
 #include <controller.h>
-#include <ft5x\ftinternal.h>
+#include <fts521\ftsinternal.h>
 #include <spb.h>
 #include <initguid.h>
 #include <devguid.h>

@@ -174,8 +174,8 @@ TchReadReport(
 // 
 #include "HidCommon.h"
 
-#define X_MASK 0xFE, 0xFE
-#define Y_MASK 0xFD, 0xFD
+#define X_MASK 0x38, 0x04
+#define Y_MASK 0x24, 0x09
 
 #define FOCALTECH_FT5X_DIGITIZER_FINGER_CONTACT_1 \
 	BEGIN_COLLECTION, 0x02, /* Collection (Logical) */ \

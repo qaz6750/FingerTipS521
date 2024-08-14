@@ -21,7 +21,7 @@
 
 #include <Cross Platform Shim\compat.h>
 #include <spb.h>
-#include <ft5x\ftinternal.h>
+#include <fts521\ftsinternal.h>
 #include <init.tmh>
 
 NTSTATUS
@@ -102,23 +102,6 @@ TchStartDevice(
 			TRACE_LEVEL_ERROR,
 			TRACE_INIT,
 			"Could not configure interrupt enablement - 0x%08lX",
-			status);
-		goto exit;
-	}
-
-	//
-	// Read and store the firmware version
-	//
-	status = Ft5xGetFirmwareVersion(
-		ControllerContext,
-		SpbContext);
-
-	if (!NT_SUCCESS(status))
-	{
-		Trace(
-			TRACE_LEVEL_ERROR,
-			TRACE_INIT,
-			"Could not get FT5X firmware version - 0x%08lX",
 			status);
 		goto exit;
 	}

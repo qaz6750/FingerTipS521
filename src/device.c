@@ -23,12 +23,12 @@
 #include <controller.h>
 #include <device.h>
 #include <spb.h>
-//#include <FocalTechTouchDriverETW.h>
+//#include <FingerTipS521-TouchDriverETW.h>
 #include <idle.h>
 #include <hid.h>
 #include <gpio.h>
 #include <device.h>
-#include <ft5x/ftinternal.h>
+#include <fts521/ftsinternal.h>
 #include <report.h>
 #include <touch_power/touch_power.h>
 #include <device.tmh>
@@ -91,6 +91,11 @@ OnInterruptIsr(
     {
         goto exit;
     }
+
+    Trace(
+        TRACE_LEVEL_ERROR,
+        TRACE_REPORTING,
+        "servicing interrupts - Start");
 
     //
     // Service touch interrupts.
@@ -356,6 +361,8 @@ OnPrepareHardware(
             devContext->ResetGpioId.HighPart =
                 res->u.Connection.IdHighPart;
 
+            Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Reset GPIO: %08x-%08x", res->u.Connection.IdHighPart, res->u.Connection.IdLowPart);
+
             devContext->HasResetGpio = TRUE;
         }
     }
@@ -381,25 +388,25 @@ OnPrepareHardware(
 
         Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Starting bring up sequence for the controller");
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to low");
+        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to low");
 
-        value = 0;
-        SetGPIO(devContext->ResetGpio, &value);
+        //value = 0;
+        //SetGPIO(devContext->ResetGpio, &value);
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
+        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
 
         delay.QuadPart = -10 * TOUCH_POWER_RAIL_STABLE_TIME;
         KeDelayExecutionThread(KernelMode, TRUE, &delay);
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to high");
+        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Setting reset gpio pin to high");
 
-        value = 1;
-        SetGPIO(devContext->ResetGpio, &value);
+        //value = 1;
+        //SetGPIO(devContext->ResetGpio, &value);
 
-        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
+        //Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Waiting...");
 
-        delay.QuadPart = -10 * TOUCH_DELAY_TO_COMMUNICATE;
-        KeDelayExecutionThread(KernelMode, TRUE, &delay);
+        //delay.QuadPart = -10 * TOUCH_DELAY_TO_COMMUNICATE;
+        //KeDelayExecutionThread(KernelMode, TRUE, &delay);
 
         Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Done");
     }
@@ -495,6 +502,11 @@ OnPrepareHardware(
     // Start the controller
     //
     status = TchStartDevice(devContext->TouchContext, &devContext->I2CContext);
+
+    Trace(
+        TRACE_LEVEL_ERROR,
+        TRACE_REPORTING,
+        "Touch device - Start");
 
     if (!NT_SUCCESS(status))
     {
